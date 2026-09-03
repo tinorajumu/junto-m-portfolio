@@ -426,6 +426,17 @@
       margin-bottom: 0.6rem;
     }
 
+    .generator-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 8px;
+      display: inline-block;
+    }
+
     .work-title {
       font-size: 1.3rem;
       font-weight: 700;
@@ -611,6 +622,28 @@
     .stat-bar .bar div { height: 100%; transition: width 0.3s ease; }
     #hp-fill { background: linear-gradient(90deg, #c0392b, #ff4d4d); width: 100%; }
     #food-fill { background: linear-gradient(90deg, #d35400, #f39c12); width: 100%; }
+
+    /* 徘徊ゾンビ（クリックで討伐→FOOD回復） */
+    .zombie {
+      position: fixed;
+      font-size: 2.2rem;
+      cursor: crosshair;
+      z-index: 15;
+      line-height: 1;
+      user-select: none;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 0 6px rgba(0, 255, 100, 0.7)) grayscale(0.25) hue-rotate(-10deg);
+      transition: left 3.5s linear, top 3.5s linear;
+      animation: zombieShuffle 0.6s ease-in-out infinite alternate;
+    }
+    .zombie:hover {
+      filter: drop-shadow(0 0 12px rgba(0, 255, 100, 1)) grayscale(0.25) hue-rotate(-10deg);
+      transform: scale(1.15);
+    }
+    @keyframes zombieShuffle {
+      0% { transform: rotate(-8deg); }
+      100% { transform: rotate(8deg); }
+    }
 
     /* 隠し回復アイテム */
     .hidden-food {
@@ -824,6 +857,7 @@
           </div>
           <div class="work-content">
             <span class="work-tag">Lecture 06</span>
+            <span class="generator-tag">🤖 Gemini</span>
             <h3 class="work-title">全力肯定彼氏くん（LuC4）システムと対話サイクル</h3>
             <p class="work-description">
               画像と音声をマルチモーダルに解釈しユーザーに全力肯定で応答するLINEボットのシステム設計概念。AIの自動出力に依存するのではなく、人間の管理者（Human-in-the-Loop）が後ろで監視・制御することで、サービスの安全性と品質を高めるサイバーかつ温かみのある対話サイクルを描きました。
@@ -843,7 +877,7 @@
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
+                  <div class="rsl-val">Junto M</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">Payment</div>
@@ -862,6 +896,7 @@
           </div>
           <div class="work-content">
             <span class="work-tag">Lecture 03</span>
+            <span class="generator-tag">🤖 Gemini</span>
             <h3 class="work-title">PUNK REBEL：来歴と個性の調和</h3>
             <p class="work-description">
               自らの個性とクリエイティビティを象徴するパンク少女のイラスト。背景動画「Video Project 7.mp4」の持つオリジナル音楽の衝動と呼応するよう、アメコミ風の劇的な色彩とアングルをプロンプトで細部まで指定。AIの偶然性に頼らず、自分の明確なコンセプトによって制御・創作した、ポートフォリオを象徴する一枚。
@@ -877,11 +912,11 @@
               <div class="rsl-grid">
                 <div class="rsl-item">
                   <div class="rsl-label">Usage</div>
-                  <div class="rsl-val restrict">ai-train:no</div>
+                  <div class="rsl-val permit">ai-input</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
+                  <div class="rsl-val">Junto M</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">Payment</div>
@@ -900,6 +935,7 @@
           </div>
           <div class="work-content">
             <span class="work-tag">Lecture 02</span>
+            <span class="generator-tag">✍️ Manual</span>
             <h3 class="work-title">言葉とシンボルの探求：初期クリエイティブワーク</h3>
             <p class="work-description">
               講義の初期段階における、プロンプトを用いない直接的なアプローチ、または基礎的なシンボルワークの検証画像。AIにすべてを生成させるのではなく、クリエイター自身の直接的な手の介入と、言葉の基礎概念の整理にフォーカスした最初期の提出作品です。
@@ -919,7 +955,7 @@
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
+                  <div class="rsl-val">Junto M</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">Payment</div>
@@ -938,6 +974,7 @@
           </div>
           <div class="work-content">
             <span class="work-tag">Lecture 05</span>
+            <span class="generator-tag">🤖 Gemini</span>
             <h3 class="work-title">私の中の生成AIの仕組み：砂のアートと風の比喩</h3>
             <p class="work-description">
               Diffusionモデルの数理的なアルゴリズム（ノイズの付加と除去）を、「砂絵のアートが風で崩れ、職人（デノイザ）がそれを取り除いて再配置する」という私独自の直感的な比喩をもとにビジュアル化した図解。温かみのあるデジタル水彩の質感と技術的テキストの融合を狙いました。
@@ -953,11 +990,11 @@
               <div class="rsl-grid">
                 <div class="rsl-item">
                   <div class="rsl-label">Usage</div>
-                  <div class="rsl-val permit">search</div>
+                  <div class="rsl-val permit">ai-input</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
+                  <div class="rsl-val">Junto M</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">Payment</div>
@@ -976,6 +1013,7 @@
           </div>
           <div class="work-content">
             <span class="work-tag">Lecture 04</span>
+            <span class="generator-tag">🤖 Gemini</span>
             <h3 class="work-title">オープンモデル vs 商用モデル（比較インフォグラフィック）</h3>
             <p class="work-description">
               オープンソースモデルと商用クローズドモデルという、AI技術を取り巻く2大陣営の思想設計の違いを直感的に整理したインフォグラフィック。LoRAやControlNetの構造的な違いからライセンス契約の違いまで、グラフィカルに一望できるようにコントロールして出力しました。
@@ -991,11 +1029,11 @@
               <div class="rsl-grid">
                 <div class="rsl-item">
                   <div class="rsl-label">Usage</div>
-                  <div class="rsl-val restrict">ai-train:no</div>
+                  <div class="rsl-val permit">ai-input</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
+                  <div class="rsl-val">Junto M</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">Payment</div>
@@ -1082,6 +1120,8 @@
 
         if (hpLevel <= 0) {
           clearInterval(survivalTimer);
+          clearInterval(zombieSpawnTimer);
+          document.querySelectorAll('.zombie').forEach(z => z.remove());
           document.getElementById("death-screen").classList.add("active");
         }
       }, 1000);
@@ -1103,6 +1143,59 @@
         document.body.appendChild(popup);
         setTimeout(() => popup.remove(), 1000);
       };
+
+      // --- ゾンビ：画面を徘徊し、クリックで倒すとFOODが回復する ---
+      const ZOMBIE_SIZE = 40;
+
+      function showFoodPopup(x, y, text, color) {
+        const popup = document.createElement("div");
+        popup.innerText = text;
+        popup.style.cssText = `position:fixed; top:${y}px; left:${x}px; color:${color}; font-weight:bold; font-family:'Orbitron', sans-serif; z-index:9999; animation: floatUp 1s forwards; text-shadow: 0 0 8px ${color};`;
+        document.body.appendChild(popup);
+        setTimeout(() => popup.remove(), 1000);
+      }
+
+      function spawnZombie() {
+        if (hpLevel <= 0) return; // 死亡後はスポーンしない
+
+        const zombie = document.createElement('div');
+        zombie.className = 'zombie';
+        zombie.textContent = '🧟';
+
+        let x = Math.random() * (window.innerWidth - ZOMBIE_SIZE);
+        let y = Math.random() * (window.innerHeight - ZOMBIE_SIZE * 2) + ZOMBIE_SIZE;
+        zombie.style.left = x + 'px';
+        zombie.style.top = y + 'px';
+        document.body.appendChild(zombie);
+
+        // ランダムにゆっくり徘徊させる
+        const wanderInterval = setInterval(() => {
+          x = Math.max(0, Math.min(window.innerWidth - ZOMBIE_SIZE, x + (Math.random() * 240 - 120)));
+          y = Math.max(ZOMBIE_SIZE, Math.min(window.innerHeight - ZOMBIE_SIZE, y + (Math.random() * 240 - 120)));
+          zombie.style.left = x + 'px';
+          zombie.style.top = y + 'px';
+        }, 3500);
+
+        // 一定時間クリックされなければ自然消滅（次のゾンビに交代）
+        const despawnTimeout = setTimeout(() => {
+          clearInterval(wanderInterval);
+          zombie.remove();
+        }, 20000);
+
+        zombie.addEventListener('click', (e) => {
+          clearInterval(wanderInterval);
+          clearTimeout(despawnTimeout);
+          const reward = 15;
+          foodLevel = Math.min(100, foodLevel + reward);
+          updateHUD();
+          showFoodPopup(e.clientX, e.clientY, `+${reward} Food! (ゾンビ討伐)`, '#00ff77');
+          zombie.remove();
+        });
+      }
+
+      // 数秒おきにゾンビが出現する
+      const zombieSpawnTimer = setInterval(spawnZombie, 6000);
+      spawnZombie(); // 最初の1体はすぐ出現
 
       // ==========================================================================
       // イースターエッグ2：AI VTuberジャック (フッター3回クリック)
