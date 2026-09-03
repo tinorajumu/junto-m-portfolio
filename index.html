@@ -296,16 +296,17 @@
       border: 1px solid var(--accent-cyan);
       color: var(--accent-cyan);
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
       padding: 4px 8px;
       border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       box-shadow: var(--neon-glow-cyan);
       display: flex;
       align-items: center;
       gap: 4px;
+      white-space: nowrap;
+      max-width: calc(100% - 24px);
     }
 
     .work-content {
@@ -392,9 +393,15 @@
       font-family: monospace;
       font-size: 0.8rem;
       color: #b0c4de;
-      word-break: break-all;
+      word-break: break-word;
       margin-bottom: 1rem;
       line-height: 1.4;
+    }
+
+    .prompt-box.no-prompt {
+      font-family: 'Noto Sans JP', sans-serif;
+      color: var(--text-muted);
+      font-style: italic;
     }
 
     /* ライセンス要件表示 (RSL 1.0) */
@@ -557,136 +564,22 @@
       <h2 class="section-title">Lecture Archives & Works</h2>
       <div class="gallery-grid">
 
-        <!-- 作品1: 第1回 -->
+        <!-- 作品1 -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/lecture-01-prompt-engineering.jpg" alt="第1回成果物">
-            <span class="c2pa-badge">✓ C2PA</span>
+            <img src="assets/images/work-01-ai-guide-manga.jpg" alt="作品1: 高校生向け 生成AI活用ガイド（4コマ解説）">
+            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Lecture 01</span>
-            <h3 class="work-title">AI時代の言葉の力：プロンプトエンジニアリングの基礎</h3>
-            <p class="work-description">
-              第1回「言葉で操る」の課題提出画像。AIへの最初のプロンプト入力によって生み出されたクリエイティブな初期衝動を表現しました。言葉がそのまま形として現れるプロセスを可視化することに注力しています。
-            </p>
-            <details class="details-prompt">
-              <summary>Show Prompt</summary>
-              <div class="prompt-box">
-                AI生成の未来を守り、来歴を証明する、デジタルハリウッド大学の講義を象徴するシンボルマーク、ミニマル、フラットデザイン、ネオンブルー、ダークテーマ
-              </div>
-            </details>
-            <div class="rsl-licensing-box">
-              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
-              <div class="rsl-grid">
-                <div class="rsl-item">
-                  <div class="rsl-label">Usage</div>
-                  <div class="rsl-val permit">ai-input</div>
-                </div>
-                <div class="rsl-item">
-                  <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
-                </div>
-                <div class="rsl-item">
-                  <div class="rsl-label">Payment</div>
-                  <div class="rsl-val">credit</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 作品2: 第2回 -->
-        <article class="work-card">
-          <div class="work-image-container">
-            <img src="assets/images/lecture-02-diffusion-sand-art.jpg" alt="第2回成果物">
-            <span class="c2pa-badge">✓ C2PA</span>
-          </div>
-          <div class="work-content">
-            <span class="work-tag">Lecture 02</span>
-            <h3 class="work-title">私の中の生成AIの仕組み：砂のアートと風の比喩</h3>
-            <p class="work-description">
-              Diffusionモデルのノイズ除去プロセスを「砂のアートと風」の直感的な比喩を用いて図解。完全なノイズ（ただの砂）から、風（ノイズ）を少しずつ取り除き、職人（デノイザ）が美しいカラフルな猫の砂のアートを徐々に浮かび上がらせる過程を美しいファンタジーテイストで視覚化しました。
-            </p>
-            <details class="details-prompt">
-              <summary>Show Prompt</summary>
-              <div class="prompt-box">
-                A beautiful sand art creation of a colorful cat. In the background, a wind of noise (tiny white sand grains) is swirling. The cat is slowly emerging from the sand. Highly detailed, watercolor and fantasy style illustration.
-              </div>
-            </details>
-            <div class="rsl-licensing-box">
-              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
-              <div class="rsl-grid">
-                <div class="rsl-item">
-                  <div class="rsl-label">Usage</div>
-                  <div class="rsl-val permit">search</div>
-                </div>
-                <div class="rsl-item">
-                  <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
-                </div>
-                <div class="rsl-item">
-                  <div class="rsl-label">Payment</div>
-                  <div class="rsl-val">credit</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 作品3: 第3回 -->
-        <article class="work-card">
-          <div class="work-image-container">
-            <img src="assets/images/lecture-03-open-vs-commercial.jpg" alt="第3回成果物">
-            <span class="c2pa-badge">✓ C2PA</span>
-          </div>
-          <div class="work-content">
-            <span class="work-tag">Lecture 03</span>
-            <h3 class="work-title">オープンモデル vs 商用モデルの設計思想</h3>
-            <p class="work-description">
-              オープンソースと商用モデルの技術的・商業的なエコシステムの対比を図示したインフォグラフィック。LoRAやControlNetのカスタマイズ性を活かしたオープンモデル（門が開かれた世界）と、高度なセキュリティと安定したサポート、非公開の重みを持つ商用モデル（近代的な要塞の門）をシンボリックに対比して表現しています。
-            </p>
-            <details class="details-prompt">
-              <summary>Show Prompt</summary>
-              <div class="prompt-box">
-                An infographic comparing Open Models vs Commercial Models. Open Models side: gateway open, developers working, icons of LoRA and ControlNet, transparent gears. Commercial Models side: closed corporate gate, secure lock icon, enterprise support. Dark blue background.
-              </div>
-            </details>
-            <div class="rsl-licensing-box">
-              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
-              <div class="rsl-grid">
-                <div class="rsl-item">
-                  <div class="rsl-label">Usage</div>
-                  <div class="rsl-val restrict">ai-train:no</div>
-                </div>
-                <div class="rsl-item">
-                  <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
-                </div>
-                <div class="rsl-item">
-                  <div class="rsl-label">Payment</div>
-                  <div class="rsl-val">credit</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 作品4: 第4回 -->
-        <article class="work-card">
-          <div class="work-image-container">
-            <img src="assets/images/lecture-04-ai-guide-manga.jpg" alt="第4回成果物">
-            <span class="c2pa-badge">✓ C2PA</span>
-          </div>
-          <div class="work-content">
-            <span class="work-tag">Lecture 04</span>
+            <span class="work-tag">Work 01</span>
             <h3 class="work-title">高校生向け 生成AI活用ガイド（4コマ解説）</h3>
             <p class="work-description">
-              高校生向けに生成AIの正しい向き合い方を解説する4コマ漫画。文化祭の企画立案や歴史の要約など日常の学習に役立てつつも、「AIも間違いを犯すため、必ず最終確認を行い、自分の言葉で調整する」という人間側のチェック（Human-in-the-Loop）の重要性を、親しみやすいアニメスタイルで表現。
+              高校生向けに生成AIの正しい向き合い方と具体的な活用方法を解説する4コマ漫画。右から左へと流れる日本式のコマ割りをプロンプトで制御し、文字に頼らず視覚的なストーリー展開のみで「AIの利便性」と「ハルシネーション（間違い）に対するファクトチェックの重要性」を直感的に伝えています。
             </p>
             <details class="details-prompt">
               <summary>Show Prompt</summary>
               <div class="prompt-box">
-                A 4-panel educational manga style illustration for high school students learning to use AI for generating ideas for a school festival, writing a summary of history, and reminding them to review the content because AI can make mistakes. Bright and positive anime style.
+                高校生でもわかる生成AIの使い方の画像を生成して。主人公は男子高校生と女子高校生の2人を主人公にして。タッチは漫画風で、絵でわかりやすくするようにして。文字は少なくして、絵をメインにして。そして、構成は右から左になるようにして。
               </div>
             </details>
             <div class="rsl-licensing-box">
@@ -709,22 +602,22 @@
           </div>
         </article>
 
-        <!-- 作品5: 第5回 -->
+        <!-- 作品2 -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/lecture-05-line-chatbot.jpg" alt="第5回成果物">
-            <span class="c2pa-badge">✓ C2PA</span>
+            <img src="assets/images/work-02-prompt-symbol-exploration.jpg" alt="作品2: 言葉とシンボルの探求：初期クリエイティブワーク">
+            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Lecture 05</span>
-            <h3 class="work-title">マルチモーダルLINEチャットボット『全力肯定彼氏くん』</h3>
+            <span class="work-tag">Work 02</span>
+            <h3 class="work-title">言葉とシンボルの探求：初期クリエイティブワーク</h3>
             <p class="work-description">
-              音声と画像を認識し、人間を「全力肯定」するチャットボット『LuC4』のシステム図と、サイバーパンクなコントロールルームでの監視（Human-In-The-Loop：オペレーター）のプロセスを表現。AIが一方的に処理するのではなく、人間が意図してコントロールを握るシステム設計のビジョン。
+              講義の初期段階における、プロンプトを用いない直接的なアプローチ、または基礎的なシンボルワークの検証画像。AIにすべてを生成させるのではなく、クリエイター自身の直接的な手の介入と、言葉の基礎概念の整理にフォーカスした最初期の提出作品です。
             </p>
             <details class="details-prompt">
               <summary>Show Prompt</summary>
-              <div class="prompt-box">
-                A futuristic cyberpunk control room. A female HITL operator is monitoring a large screen showing a chat flow of 'LuC4', a multimodal LINE chatbot. On a smartphone screen, a cute anime boy with red hair is saying 'You did great today!' in a LINE-like interface. Neon lights.
+              <div class="prompt-box no-prompt">
+                プロンプトなし — 本作品はAIへの直接的なテキスト指示を行わず、手作業による基礎的なシンボルワークとして制作されています。
               </div>
             </details>
             <div class="rsl-licensing-box">
@@ -747,22 +640,22 @@
           </div>
         </article>
 
-        <!-- 作品6: 第6回 -->
+        <!-- 作品3 -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/lecture-06-punk-rebel.jpg" alt="第6回成果物">
-            <span class="c2pa-badge">✓ C2PA</span>
+            <img src="assets/images/work-03-punk-rebel.jpg" alt="作品3: PUNK REBEL：来歴と個性の調和">
+            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Lecture 06</span>
+            <span class="work-tag">Work 03</span>
             <h3 class="work-title">PUNK REBEL：来歴と個性の調和</h3>
             <p class="work-description">
-              自らの個性とクリエイティビティを象徴するパンク少女のイラスト。背景動画『Video Project 7.mp4』とも連動しており、AIを創作の『風』として利用しながらも、自らの明確なコンセプトとプロンプト、そしてC2PA/RSLという権利宣言（Rebel against mindless copying）を埋め込むことで、真のオリジナリティを確立させました。
+              自らの個性とクリエイティビティを象徴するパンク少女のイラスト。背景動画「Video Project 7.mp4」の持つオリジナル音楽の衝動と呼応するよう、アメコミ風の劇的な色彩とアングルをプロンプトで細部まで指定。AIの偶然性に頼らず、自分の明確なコンセプトによって制御・創作した、ポートフォリオを象徴する一枚。
             </p>
             <details class="details-prompt">
               <summary>Show Prompt</summary>
               <div class="prompt-box">
-                A rebellious punk girl with short spiky bright red hair, cybernetic glowing blue arm, holding a graffiti baseball bat in a dark neon alley after rain. Wearing a leather jacket covered in studs, saying 'REBEL' and 'PUNK'S NOT DEAD'. Bold comic-book art style, highly expressive.
+                19歳の女性、短くツンツンした赤髪（スパイキーヘア）、鋭く睨みつける釣り目、クールで威圧感のあるパンクファッション。背景はサイバーパンクな路地裏。ドラマチックな明暗法、迫力のあるダッチアングル、アメコミ風のアートスタイル。
               </div>
             </details>
             <div class="rsl-licensing-box">
@@ -771,6 +664,120 @@
                 <div class="rsl-item">
                   <div class="rsl-label">Usage</div>
                   <div class="rsl-val restrict">ai-train:no</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品4 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/work-04-open-vs-commercial.jpg" alt="作品4: オープンモデル vs 商用モデル（比較インフォグラフィック）">
+            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Work 04</span>
+            <h3 class="work-title">オープンモデル vs 商用モデル（比較インフォグラフィック）</h3>
+            <p class="work-description">
+              オープンソースモデルと商用クローズドモデルという、AI技術を取り巻く2大陣営の思想設計の違いを直感的に整理したインフォグラフィック。LoRAやControlNetの構造的な違いからライセンス契約の違いまで、グラフィカルに一望できるようにコントロールして出力しました。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                モダンなフラットイラストスタイルの、プロフェッショナルで詳細な比較インフォグラフィック。画像は垂直に2つのパネルに分かれている。中央上部には、大きな日本語テキストで「オープンモデル vs 商用モデル」と書かれており、その背景は光るデジタルネットワークの線とノードになっている。左パネル（オープンモデル）は明るい緑色の背景。タイトルは「オープンモデル (Open Models)」。上部のイラストは、開いたゲートと、ラップトップで作業する多様な開発者の多数のグループ。周囲にはコードアイコン（&lt;/&gt;）、電球アイコンがある。テキストリストとアイコンは、無料・オープンソース（地球と鉛筆）、自由にカスタマイズ可能（コードとギア）、コード &amp; 重み公開（ギアとコード）、コミュニティ駆動（人々）が日本語で並ぶ。その下には、下部イラストとして、LoRAセクション（スライダーと矢印のアイコン、「独自の微調整が可能」）、ControNetセクション（カメラとノブのアイコン、「様々な入力による制御」）、過学習に注意セクション（警告マーク付きの脳のアイコン、「過学習に注意」）が日本語で描かれる。右パネル（商用モデル）は明るいオレンジ色の背景。表示するタイトルは商用モデル (Commercial Models)　で。上部のイラストは、閉じられたゲートとモダンなビル、そこに企業ロゴ（例：OpenAI風のアイコン）がある。大きなパドロック（鍵）アイコンが目立つ。テキストリストとアイコンは、有料・ライセンス制（ドル記号とコイン）、安定した利用（シールド）、重みは非公開（鍵付き盾）、企業によるサポート（ヘッドセット付き人）が日本語で並ぶ。その下には、下部イラストとして、過学習を防ぐセクション（脳のアイコンと3つの緑色チェックマーク、「過学習を防ぐ」）、性能的なパラメータセクション（3つの矢印アイコンと3つの緑色チェックマーク、「性能的なパラメータ」）が日本語で描かれる。中央セクションには、縦に並んだアイコンとラベルが配置され、比較カテゴリーを示す：コスト、アクセス、カスタマイズ、透明性、用途。画像全体は、すっきりとした線、鮮やかな色彩、そしてデジタルネットワークの輝きを特徴とするモダンなスタイル。
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val restrict">ai-train:no</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品5 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/work-05-diffusion-sand-art.jpg" alt="作品5: 私の中の生成AIの仕組み：砂のアートと風の比喩（Diffusionモデル）">
+            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Work 05</span>
+            <h3 class="work-title">私の中の生成AIの仕組み：砂のアートと風の比喩（Diffusionモデル）</h3>
+            <p class="work-description">
+              Diffusionモデルの数理的アルゴリズム（ノイズの付加と除去）を、「砂絵のアートが風で崩れ、職人（デノイザ）がそれを取り除いて再配置する」という私独自の直感的な比喩をもとにビジュアル化した図解。温かみのあるデジタル水彩の質感と技術的テキストの融合を狙いました。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                温かみのある手描きのデジタル水彩風イラストで砂のアートと風の比喩に基づく Diffusion モデルの仕組みを描いたインフォグラフィックを作成するという内容で、画面を横断するタイムライン形式で左側には特徴のない灰色の砂の山から始まり中央で砂の山から猫の形が浮かび上がり小さな職人の手学習されたデノイザが砂粒を配置。右側には完成した詳細な猫の砂の彫刻があります。背景には光るデジタルネットワークの線と砂漠のような質感があり右上には風が馬の砂の彫刻を吹き飛ばしているインセットがあり、画像内には日本語テキストが含まれます。タイトルは私の中の生成AIの仕組み砂のアートと風の比喩 Diffusionモデルとしラベルとしてただの砂完全なノイズ、ノイズを少しずつ取り除き形を浮かび上がらせる、新しい砂のアート生成された画像、学習されたデノイザ職人、フォワードプロセス風で崩れる過程を観察、ノイズの嵐を配置するように。説明文として生成AIが美しい砂のアート画像が風ノイズで崩れてただの砂の山完全なノイズになるまでの過程を何千回も観察学習しました。生成する時はそのただの砂の山から崩れた過程を逆再生するように学習した職人デノイザが砂の粒を正確に再配置して新しい見たことのない砂のアート生成された画像を作り上げます。これが私の Diffusion モデルの腑に落ちた比喩です、という文章を柔らかい光と優しい雰囲気を描くように。
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val permit">search</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品6 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/work-06-line-chatbot.jpg" alt="作品6: マルチモーダルLINEチャットボット『全力肯定彼氏くん（LuC4）』">
+            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Work 06</span>
+            <h3 class="work-title">マルチモーダルLINEチャットボット『全力肯定彼氏くん（LuC4）』</h3>
+            <p class="work-description">
+              画像と音声をマルチモーダルに解釈しユーザーに全力肯定で応答するLINEボットのシステム設計概念。AIの自動出力に依存するのではなく、人間の管理者（Human-in-the-Loop）が後ろで監視・制御することで、サービスの安全性と品質を高めるサイバーかつ温かみのある対話サイクルを描きました。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                近未来的なスマートフォンの画面にチャットアプリが表示されユーザーが写真や音声メッセージを送ると画面の奥にいるAIキャラクターがそれを受け取りテキストや音声で返信している様子を描いたイラストです背景には人間のオペレーターがAIの応答を監視して微調整するコントロールパネルがありヒューマンインザループの仕組みを表現しています画像の中央上部にはマルチモーダルLINEチャットボット「全力肯定彼氏くん（LuC4）」という文字が大きくネオンサインのように輝いて表示されています全体的にサイバーパンクと日常が融合したような温かみのあるデジタルアートスタイルにしてください 画像はわかりやすくかつ、視覚的にもわかるように制作サイクルを表現してください。
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val permit">ai-input</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">User</div>
