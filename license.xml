@@ -15,17 +15,16 @@
   <!-- Site-wide default: applies to any asset not covered by a more specific entry below -->
   <content url="https://tinorajumu.github.io/junto-m-portfolio/*">
     <license>
-      <permits type="usage">search</permits>
+      <permits type="usage">ai-input</permits>
       <permits type="user">non-commercial</permits>
-      <prohibits type="usage">ai-train</prohibits>
       <payment type="attribution" />
     </license>
   </content>
 
-  <!-- Work 01: 高校生向け 生成AI活用ガイド（4コマ解説・プロフィール画像として使用） -->
+  <!-- Work 01: 高校生向け 生成AI活用ガイド（4コマ解説） -->
   <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/work-01-highschool-guide.jpg">
     <license>
-      <permits type="usage">search</permits>
+      <permits type="usage">ai-input</permits>
       <permits type="user">non-commercial</permits>
       <payment type="attribution" />
     </license>
@@ -43,7 +42,7 @@
   <!-- Work 03: PUNK REBEL：来歴と個性の調和 -->
   <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/work-03-punk-rebel.jpg">
     <license>
-      <prohibits type="usage">ai-train</prohibits>
+      <permits type="usage">ai-input</permits>
       <permits type="user">non-commercial</permits>
       <payment type="attribution" />
     </license>
@@ -52,7 +51,7 @@
   <!-- Work 04: オープンモデル vs 商用モデル（比較インフォグラフィック） -->
   <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/work-04-open-vs-commercial.jpg">
     <license>
-      <prohibits type="usage">ai-train</prohibits>
+      <permits type="usage">ai-input</permits>
       <permits type="user">non-commercial</permits>
       <payment type="attribution" />
     </license>
@@ -61,7 +60,7 @@
   <!-- Work 05: 私の中の生成AIの仕組み：砂のアートと風の比喩（Diffusionモデル） -->
   <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/work-05-diffusion-sand-art.jpg">
     <license>
-      <permits type="usage">search</permits>
+      <permits type="usage">ai-input</permits>
       <permits type="user">non-commercial</permits>
       <payment type="attribution" />
     </license>

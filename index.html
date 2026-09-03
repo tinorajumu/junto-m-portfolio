@@ -846,7 +846,7 @@
     <section class="profile-card">
       <div class="profile-header-layout">
         <div class="profile-avatar-wrap">
-          <img class="profile-avatar" src="assets/images/work-01-highschool-guide.jpg" alt="村井洵仁 プロフィール画像（高校生向け生成AI活用ガイドの4コマより）">
+          <img class="profile-avatar" src="assets/images/profile-photo.jpg" alt="村井洵仁 プロフィール写真">
         </div>
         <div class="profile-info">
           <h2>村井 洵仁</h2>
@@ -905,6 +905,45 @@
               <summary>Show Prompt</summary>
               <div class="prompt-box" style="font-size: 0.75rem;">
                 近未来的なスマートフォンの画面にチャットアプリが表示されユーザーが写真や音声メッセージを送ると画面の奥にいるAIキャラクターがそれを受け取りテキストや音声で返信している様子を描いたイラストです背景には人間のオペレーターがAIの応答を監視して微調整するコントロールパネルがありヒューマンインザループの仕組みを表現しています画像の中央上部にはマルチモーダルLINEチャットボット「全力肯定彼氏くん（LuC4）」という文字が大きくネオンサインのように輝いて表示されています全体的にサイバーパンクと日常が融合したような温かみのあるデジタルアートスタイルにしてください 画像はわかりやすくかつ、視覚的にもわかるように制作サイクルを表現してください。
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val permit">ai-input</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">Junto M</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品1: 高校生向け生成AI -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/work-01-highschool-guide.jpg" alt="作品1: 高校生向け生成AI">
+            <span class="c2pa-badge">✓ C2PA</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Lecture 01</span>
+            <span class="generator-tag">🤖 Gemini</span>
+            <h3 class="work-title">高校生向け 生成AI活用ガイド（4コマ解説）</h3>
+            <p class="work-description">
+              高校生向けに生成AIの正しい向き合い方と具体的な活用方法を解説する4コマ漫画。右から左へと流れる日本式のコマ割りをプロンプトで制御し、文字に頼らず視覚的なストーリー展開のみで「AIの利便性」と「ハルシネーション（間違い）に対するファクトチェックの重要性」を直感的に伝えています。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                高校生でもわかる生成AIの使い方の画像を生成して。主人公は男子高校生と女子高校生の2人を主人公にして。タッチは漫画風で、絵でわかりやすくするようにして。文字は少なくして、絵をメインにして。そして、構成は右から左になるようにして。
               </div>
             </details>
             <div class="rsl-licensing-box">
@@ -1266,13 +1305,38 @@
         zombie.className = 'zombie';
         zombie.textContent = '🧟';
 
-        // ページ(ドキュメント)基準の座標。position:fixedではなくabsoluteなのでスクロールに追従する
-        const docWidth = document.documentElement.scrollWidth;
-        let x = Math.random() * Math.max(0, Math.min(window.innerWidth, docWidth) - ZOMBIE_SIZE);
-        let y = window.scrollY + ZOMBIE_SIZE + Math.random() * Math.max(0, window.innerHeight - ZOMBIE_SIZE * 2);
+        // 現在の画面(ビューポート)の外側から出現させる（上下左右いずれかの枠外）
+        const viewLeft = window.scrollX;
+        const viewTop = window.scrollY;
+        const viewW = window.innerWidth;
+        const viewH = window.innerHeight;
+        const margin = ZOMBIE_SIZE + 20;
+        const edge = Math.floor(Math.random() * 4); // 0:左 1:右 2:上 3:下
+        let x, y;
+        if (edge === 0) {
+          x = viewLeft - margin;
+          y = viewTop + Math.random() * Math.max(0, viewH - ZOMBIE_SIZE);
+        } else if (edge === 1) {
+          x = viewLeft + viewW + margin;
+          y = viewTop + Math.random() * Math.max(0, viewH - ZOMBIE_SIZE);
+        } else if (edge === 2) {
+          x = viewLeft + Math.random() * Math.max(0, viewW - ZOMBIE_SIZE);
+          y = viewTop - margin;
+        } else {
+          x = viewLeft + Math.random() * Math.max(0, viewW - ZOMBIE_SIZE);
+          y = viewTop + viewH + margin;
+        }
         zombie.style.left = x + 'px';
         zombie.style.top = y + 'px';
         document.body.appendChild(zombie);
+
+        // 一呼吸おいてから、画面内のランダムな位置へゆっくり歩いてくる（枠外→画面内への侵入演出）
+        setTimeout(() => {
+          x = viewLeft + Math.random() * Math.max(0, viewW - ZOMBIE_SIZE);
+          y = viewTop + ZOMBIE_SIZE + Math.random() * Math.max(0, viewH - ZOMBIE_SIZE * 2);
+          zombie.style.left = x + 'px';
+          zombie.style.top = y + 'px';
+        }, 60);
 
         // ランダムにゆっくり徘徊させる（ドキュメント全体の範囲内）
         const wanderInterval = setInterval(() => {
