@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  RSL (Really Simple Licensing) 1.0 declaration for this portfolio site.
+  https://rslstandard.org/rsl
+
+  RSL is a machine-readable licensing standard, distinct from human-facing
+  licenses such as Creative Commons. It lets crawlers and AI agents
+  programmatically discover what usage is permitted for each asset, who may
+  use it, and under what payment/attribution terms, without requiring a
+  human to read prose. This site is linked from /robots.txt via the
+  "License:" directive.
+-->
+<rsl xmlns="https://rslstandard.org/rsl">
+
+  <!-- Site-wide default: applies to any asset not covered by a more specific entry below -->
+  <content url="https://tinorajumu.github.io/junto-m-portfolio/*">
+    <license>
+      <permits type="usage">search</permits>
+      <permits type="user">non-commercial</permits>
+      <prohibits type="usage">ai-train</prohibits>
+      <payment type="attribution" />
+    </license>
+  </content>
+
+  <!-- Lecture 01: AI時代の言葉の力：プロンプトエンジニアリングの基礎 -->
+  <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/lecture-01-prompt-engineering.jpg">
+    <license>
+      <permits type="usage">ai-input</permits>
+      <permits type="user">non-commercial</permits>
+      <payment type="attribution" />
+    </license>
+  </content>
+
+  <!-- Lecture 02: 私の中の生成AIの仕組み：砂のアートと風の比喩 -->
+  <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/lecture-02-diffusion-sand-art.jpg">
+    <license>
+      <permits type="usage">search</permits>
+      <permits type="user">non-commercial</permits>
+      <payment type="attribution" />
+    </license>
+  </content>
+
+  <!-- Lecture 03: オープンモデル vs 商用モデルの設計思想 -->
+  <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/lecture-03-open-vs-commercial.jpg">
+    <license>
+      <prohibits type="usage">ai-train</prohibits>
+      <permits type="user">non-commercial</permits>
+      <payment type="attribution" />
+    </license>
+  </content>
+
+  <!-- Lecture 04: 高校生向け 生成AI活用ガイド（4コマ解説） -->
+  <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/lecture-04-ai-guide-manga.jpg">
+    <license>
+      <permits type="usage">search</permits>
+      <permits type="user">non-commercial</permits>
+      <payment type="attribution" />
+    </license>
+  </content>
+
+  <!-- Lecture 05: マルチモーダルLINEチャットボット『全力肯定彼氏くん』 -->
+  <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/lecture-05-line-chatbot.jpg">
+    <license>
+      <permits type="usage">ai-input</permits>
+      <permits type="user">non-commercial</permits>
+      <payment type="attribution" />
+    </license>
+  </content>
+
+  <!-- Lecture 06: PUNK REBEL：来歴と個性の調和 -->
+  <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/lecture-06-punk-rebel.jpg">
+    <license>
+      <prohibits type="usage">ai-train</prohibits>
+      <permits type="user">non-commercial</permits>
+      <payment type="attribution" />
+    </license>
+  </content>
+
+</rsl>

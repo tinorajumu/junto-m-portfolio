@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Provenance & Licensing | 村井洵仁 AIクリエイター・ポートフォリオ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b0b0f;
+      --card-bg: rgba(18, 18, 24, 0.75);
+      --card-border: rgba(0, 242, 254, 0.15);
+      --card-border-hover: rgba(186, 12, 247, 0.5);
+      --text-color: #f0f0f5;
+      --text-muted: #a0a0b0;
+      --accent-cyan: #00f2fe;
+      --accent-purple: #ba0cf7;
+      --neon-glow-cyan: 0 0 10px rgba(0, 242, 254, 0.5);
+      --neon-glow-purple: 0 0 10px rgba(186, 12, 247, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 背景動画 */
+    #video-background-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    #video-background-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.25;
+      filter: saturate(1.2) contrast(1.1);
+    }
+
+    #video-background-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(11, 11, 15, 0.5) 0%, rgba(11, 11, 15, 0.9) 100%);
+    }
+
+    /* コンテナ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* BGMコントロール */
+    .audio-control-wrapper {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+    }
+
+    .audio-btn {
+      background: rgba(11, 11, 15, 0.8);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-color);
+      font-family: 'Orbitron', sans-serif;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(5px);
+      box-shadow: var(--neon-glow-cyan);
+      transition: all 0.3s ease;
+    }
+
+    .audio-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.8);
+      transform: translateY(-2px);
+    }
+
+    .audio-btn.muted {
+      border-color: var(--accent-purple);
+      box-shadow: var(--neon-glow-purple);
+    }
+
+    .audio-btn.muted:hover {
+      background: var(--accent-purple);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(186, 12, 247, 0.8);
+    }
+
+    /* ヒーローセクション */
+    header {
+      text-align: center;
+      padding: 6rem 0 4rem;
+    }
+
+    .site-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 3rem;
+      letter-spacing: 2px;
+      background: linear-gradient(45deg, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+    }
+
+    .site-tagline {
+      font-size: 1.25rem;
+      color: var(--text-color);
+      font-weight: 700;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+    }
+
+    /* プロフィールカード */
+    .profile-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 4rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: border-color 0.5s ease;
+    }
+
+    .profile-card:hover {
+      border-color: var(--accent-cyan);
+    }
+
+    .profile-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .profile-meta {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    .profile-bio {
+      font-size: 1rem;
+      color: var(--text-color);
+      max-width: 800px;
+      margin: 1.5rem auto;
+      text-align: justify;
+    }
+
+    .profile-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin-top: 1.5rem;
+    }
+
+    .profile-link-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-link-btn:hover {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    /* ギャラリーセクション */
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--text-color);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 5rem;
+    }
+
+    /* 作品カード */
+    .work-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .work-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--card-border-hover);
+      box-shadow: 0 15px 35px rgba(186, 12, 247, 0.2);
+    }
+
+    .work-image-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background-color: #1a1a24;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .work-image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .work-card:hover .work-image-container img {
+      transform: scale(1.05);
+    }
+
+    .c2pa-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: var(--neon-glow-cyan);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .work-content {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .work-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      color: var(--accent-purple);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .work-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+    }
+
+    .work-description {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      text-align: justify;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.5;
+    }
+
+    /* アコーディオン (details) */
+    .details-prompt {
+      margin-bottom: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .details-prompt summary {
+      padding: 0.8rem 0;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      outline: none;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.3s ease;
+    }
+
+    .details-prompt summary:hover {
+      color: #fff;
+    }
+
+    .details-prompt summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .details-prompt summary::after {
+      content: '+';
+      font-size: 1.1rem;
+      font-family: monospace;
+    }
+
+    .details-prompt[open] summary::after {
+      content: '−';
+    }
+
+    .prompt-box {
+      padding: 0.8rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 2px solid var(--accent-cyan);
+      border-radius: 0 4px 4px 0;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #b0c4de;
+      word-break: break-all;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    /* ライセンス要件表示 (RSL 1.0) */
+    .rsl-licensing-box {
+      background: rgba(186, 12, 247, 0.05);
+      border: 1px solid rgba(186, 12, 247, 0.2);
+      border-radius: 8px;
+      padding: 0.8rem;
+      margin-top: auto;
+    }
+
+    .rsl-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-purple);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rsl-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    .rsl-item {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.4rem;
+      border-radius: 4px;
+    }
+
+    .rsl-label {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+
+    .rsl-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .rsl-val.permit {
+      color: #00ff66;
+    }
+
+    .rsl-val.restrict {
+      color: #ff3366;
+    }
+
+    /* フッター */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 4rem 0 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-rsl-policy {
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.8rem;
+    }
+
+    .footer-rsl-policy a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+    }
+
+    .footer-rsl-policy a:hover {
+      text-decoration: underline;
+    }
+
+    .copyright {
+      margin-top: 1rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+      .site-title {
+        font-size: 2.2rem;
+      }
+      .site-tagline {
+        font-size: 1rem;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .profile-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 背景動画 -->
+  <div id="video-background-container">
+    <video id="bg-video" autoplay loop muted playsinline>
+      <source src="assets/video/background-loop.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- BGMコントロール -->
+  <div class="audio-control-wrapper">
+    <button id="mute-btn" class="audio-btn muted">
+      🔊 Play BGM
+    </button>
+  </div>
+
+  <div class="container">
+    <!-- ヒーローセクション -->
+    <header>
+      <h1 class="site-title">Provenance & Licensing</h1>
+      <p class="site-tagline">「AI生成の未来を守り、来歴を証明する」</p>
+    </header>
+
+    <!-- プロフィールセクション -->
+    <section class="profile-card">
+      <div class="profile-header">
+        <div>
+          <h2 class="profile-title">村井 洵仁</h2>
+          <p class="profile-meta">デジタルハリウッド大学 4年 / AIクリエイター</p>
+        </div>
+      </div>
+      <p class="profile-bio">
+        AI時代のクリエイティビティにおいて、「どのように作り上げたか（過去の来歴：C2PA）」と「これからどのように扱ってよいか（未来の許諾：RSL 1.0）」の設計・実装を専門とするAIクリエイター。講義を通じて得た技術的・倫理的理解をもとに、他者との協働や権利を守りながらクリエイティブを社会に開く手法を提示します。以下は、私のプロデュース・制作した代表的なプロジェクトおよび活動実績です。
+      </p>
+      <div class="profile-links">
+        <a href="https://x.com/Shirakawaii_AIV" target="_blank" class="profile-link-btn">
+          🐦 X (旧Twitter) - Shirakawaii_AIV
+        </a>
+        <a href="https://dskr-home.vercel.app" target="_blank" class="profile-link-btn">
+          🌐 DSKR Home
+        </a>
+        <a href="https://utsushiyo-homepage.vercel.app/" target="_blank" class="profile-link-btn">
+          🌐 Utsushiyo Homepage
+        </a>
+      </div>
+    </section>
+
+    <!-- ギャラリーセクション -->
+    <main>
+      <h2 class="section-title">Lecture Archives & Works</h2>
+      <div class="gallery-grid">
+
+        <!-- 作品1: 第1回 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/lecture-01-prompt-engineering.jpg" alt="第1回成果物">
+            <span class="c2pa-badge">✓ C2PA</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Lecture 01</span>
+            <h3 class="work-title">AI時代の言葉の力：プロンプトエンジニアリングの基礎</h3>
+            <p class="work-description">
+              第1回「言葉で操る」の課題提出画像。AIへの最初のプロンプト入力によって生み出されたクリエイティブな初期衝動を表現しました。言葉がそのまま形として現れるプロセスを可視化することに注力しています。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                AI生成の未来を守り、来歴を証明する、デジタルハリウッド大学の講義を象徴するシンボルマーク、ミニマル、フラットデザイン、ネオンブルー、ダークテーマ
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val permit">ai-input</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品2: 第2回 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/lecture-02-diffusion-sand-art.jpg" alt="第2回成果物">
+            <span class="c2pa-badge">✓ C2PA</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Lecture 02</span>
+            <h3 class="work-title">私の中の生成AIの仕組み：砂のアートと風の比喩</h3>
+            <p class="work-description">
+              Diffusionモデルのノイズ除去プロセスを「砂のアートと風」の直感的な比喩を用いて図解。完全なノイズ（ただの砂）から、風（ノイズ）を少しずつ取り除き、職人（デノイザ）が美しいカラフルな猫の砂のアートを徐々に浮かび上がらせる過程を美しいファンタジーテイストで視覚化しました。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                A beautiful sand art creation of a colorful cat. In the background, a wind of noise (tiny white sand grains) is swirling. The cat is slowly emerging from the sand. Highly detailed, watercolor and fantasy style illustration.
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val permit">search</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品3: 第3回 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/lecture-03-open-vs-commercial.jpg" alt="第3回成果物">
+            <span class="c2pa-badge">✓ C2PA</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Lecture 03</span>
+            <h3 class="work-title">オープンモデル vs 商用モデルの設計思想</h3>
+            <p class="work-description">
+              オープンソースと商用モデルの技術的・商業的なエコシステムの対比を図示したインフォグラフィック。LoRAやControlNetのカスタマイズ性を活かしたオープンモデル（門が開かれた世界）と、高度なセキュリティと安定したサポート、非公開の重みを持つ商用モデル（近代的な要塞の門）をシンボリックに対比して表現しています。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                An infographic comparing Open Models vs Commercial Models. Open Models side: gateway open, developers working, icons of LoRA and ControlNet, transparent gears. Commercial Models side: closed corporate gate, secure lock icon, enterprise support. Dark blue background.
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val restrict">ai-train:no</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品4: 第4回 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/lecture-04-ai-guide-manga.jpg" alt="第4回成果物">
+            <span class="c2pa-badge">✓ C2PA</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Lecture 04</span>
+            <h3 class="work-title">高校生向け 生成AI活用ガイド（4コマ解説）</h3>
+            <p class="work-description">
+              高校生向けに生成AIの正しい向き合い方を解説する4コマ漫画。文化祭の企画立案や歴史の要約など日常の学習に役立てつつも、「AIも間違いを犯すため、必ず最終確認を行い、自分の言葉で調整する」という人間側のチェック（Human-in-the-Loop）の重要性を、親しみやすいアニメスタイルで表現。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                A 4-panel educational manga style illustration for high school students learning to use AI for generating ideas for a school festival, writing a summary of history, and reminding them to review the content because AI can make mistakes. Bright and positive anime style.
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val permit">search</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品5: 第5回 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/lecture-05-line-chatbot.jpg" alt="第5回成果物">
+            <span class="c2pa-badge">✓ C2PA</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Lecture 05</span>
+            <h3 class="work-title">マルチモーダルLINEチャットボット『全力肯定彼氏くん』</h3>
+            <p class="work-description">
+              音声と画像を認識し、人間を「全力肯定」するチャットボット『LuC4』のシステム図と、サイバーパンクなコントロールルームでの監視（Human-In-The-Loop：オペレーター）のプロセスを表現。AIが一方的に処理するのではなく、人間が意図してコントロールを握るシステム設計のビジョン。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                A futuristic cyberpunk control room. A female HITL operator is monitoring a large screen showing a chat flow of 'LuC4', a multimodal LINE chatbot. On a smartphone screen, a cute anime boy with red hair is saying 'You did great today!' in a LINE-like interface. Neon lights.
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val permit">ai-input</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作品6: 第6回 -->
+        <article class="work-card">
+          <div class="work-image-container">
+            <img src="assets/images/lecture-06-punk-rebel.jpg" alt="第6回成果物">
+            <span class="c2pa-badge">✓ C2PA</span>
+          </div>
+          <div class="work-content">
+            <span class="work-tag">Lecture 06</span>
+            <h3 class="work-title">PUNK REBEL：来歴と個性の調和</h3>
+            <p class="work-description">
+              自らの個性とクリエイティビティを象徴するパンク少女のイラスト。背景動画『Video Project 7.mp4』とも連動しており、AIを創作の『風』として利用しながらも、自らの明確なコンセプトとプロンプト、そしてC2PA/RSLという権利宣言（Rebel against mindless copying）を埋め込むことで、真のオリジナリティを確立させました。
+            </p>
+            <details class="details-prompt">
+              <summary>Show Prompt</summary>
+              <div class="prompt-box">
+                A rebellious punk girl with short spiky bright red hair, cybernetic glowing blue arm, holding a graffiti baseball bat in a dark neon alley after rain. Wearing a leather jacket covered in studs, saying 'REBEL' and 'PUNK'S NOT DEAD'. Bold comic-book art style, highly expressive.
+              </div>
+            </details>
+            <div class="rsl-licensing-box">
+              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
+              <div class="rsl-grid">
+                <div class="rsl-item">
+                  <div class="rsl-label">Usage</div>
+                  <div class="rsl-val restrict">ai-train:no</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">User</div>
+                  <div class="rsl-val">non-com</div>
+                </div>
+                <div class="rsl-item">
+                  <div class="rsl-label">Payment</div>
+                  <div class="rsl-val">credit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </main>
+
+    <!-- フッター -->
+    <footer>
+      <div class="footer-rsl-policy">
+        <p>
+          本ポートフォリオサイトは、AI時代の機械可読許諾宣言の業界標準である <strong>RSL 1.0 (Really Simple Licensing)</strong> に準拠しています。CCライセンスのような人間向けの表示ライセンスとは異なり、クローラーや検索AIが自動で解釈できる独立した機械可読標準です。<br>
+          詳細な機械可読ライセンス条件は、サイトルートに配置された <code>robots.txt</code> の <code>License:</code> ディレクティブおよび <code><a href="./license.xml">license.xml</a></code> をご参照ください。<br>
+          また、掲載画像には <strong>C2PA (Content Credentials)</strong> が署名・埋め込みされており、来歴の追跡が可能です。
+        </p>
+      </div>
+      <p class="copyright">&copy; 2026 Junji Murai. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    // BGMコントロールロジック
+    document.addEventListener('DOMContentLoaded', () => {
+      const video = document.getElementById('bg-video');
+      const muteBtn = document.getElementById('mute-btn');
+
+      // 初期はミュート（自動再生を有効にするため）
+      video.muted = true;
+
+      muteBtn.addEventListener('click', () => {
+        if (video.muted) {
+          // ミュート解除
+          video.muted = false;
+          muteBtn.textContent = '🔇 Mute BGM';
+          muteBtn.classList.remove('muted');
+          video.play().catch(e => console.log("BGM playback triggered, waiting for interaction..."));
+        } else {
+          // ミュート設定
+          video.muted = true;
+          muteBtn.textContent = '🔊 Play BGM';
+          muteBtn.classList.add('muted');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
