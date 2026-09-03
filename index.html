@@ -110,7 +110,28 @@
       top: 20px;
       right: 20px;
       z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
       transition: all 0.4s ease;
+    }
+
+    .game-toggle-btn {
+      border-color: rgba(255, 255, 255, 0.25);
+      color: var(--text-muted);
+      box-shadow: none;
+      justify-content: center;
+    }
+    .game-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-color);
+      box-shadow: none;
+      transform: translateY(-2px);
+    }
+    .game-toggle-btn.game-is-off {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
     }
 
     .audio-btn {
@@ -654,18 +675,7 @@
       100% { transform: rotate(8deg); }
     }
 
-    /* イースターエッグ4：ゾンビに見逃された作品が砂となって崩れる */
-    .sand-pile {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 0%;
-      background: linear-gradient(to top, #c9a876 0%, #b8935f 45%, rgba(184, 147, 95, 0.35) 100%);
-      transition: height 0.7s ease;
-      pointer-events: none;
-      z-index: 3;
-    }
+    /* イースターエッグ4：ゾンビに見逃された作品が砂となって崩れ、画面下に降り積もる */
     .crumble-collapsed::after {
       content: '崩壊 (COLLAPSED)';
       position: absolute;
@@ -679,6 +689,40 @@
       letter-spacing: 1px;
       text-shadow: 0 0 6px #000, 0 0 12px #000;
       z-index: 4;
+      pointer-events: none;
+    }
+
+    /* 画面下に降り積もる砂（他の作品の上に重なってもよい＝貫通せず積もる） */
+    #sand-floor {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0px;
+      max-height: 160px;
+      background: linear-gradient(to top, #c9a876 0%, #b8935f 55%, rgba(184, 147, 95, 0.55) 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+      z-index: 40;
+      pointer-events: none;
+      transition: height 0.5s ease;
+    }
+
+    #sand-particle-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .sand-grain {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 1px;
+      background: #c9a876;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
       pointer-events: none;
     }
 
@@ -801,7 +845,14 @@
     <button id="mute-btn" class="audio-btn muted">
       🔊 Play BGM
     </button>
+    <button id="game-toggle-btn" class="audio-btn game-toggle-btn">
+      🎮 GAME OFF
+    </button>
   </div>
+
+  <!-- 画面下に降り積もる砂 -->
+  <div id="sand-floor"></div>
+  <div id="sand-particle-layer"></div>
 
   <!-- 隠し機能1：サバイバルHUD -->
   <div id="survival-hud">
@@ -1148,8 +1199,9 @@
       let foodLevel = 100;
       let hpLevel = 100;
       let survivalTimer;
+      let gameEnabled = true;
 
-      survivalTimer = setInterval(() => {
+      function survivalTick() {
         foodLevel -= 2; // 毎秒空腹度が減る
         if (foodLevel <= 0) {
           foodLevel = 0;
@@ -1168,7 +1220,8 @@
           document.querySelectorAll('.zombie').forEach(z => z.remove());
           document.getElementById("death-screen").classList.add("active");
         }
-      }, 1000);
+      }
+      survivalTimer = setInterval(survivalTick, 1000);
 
       function updateHUD() {
         document.getElementById("food-fill").style.width = foodLevel + "%";
@@ -1212,18 +1265,51 @@
       let crumbleLife = 10;
       const crumbleTarget = crumbleCandidates[Math.floor(Math.random() * crumbleCandidates.length)];
       const crumbleImg = crumbleTarget ? crumbleTarget.querySelector('img') : null;
-      const sandPile = document.createElement('div');
-      sandPile.className = 'sand-pile';
-      if (crumbleTarget) crumbleTarget.appendChild(sandPile);
+
+      // 砂は作品の場所ではなく、画面下に降り積もる（他の作品の上に重なってもよい＝貫通しない）
+      const sandFloor = document.getElementById('sand-floor');
+      const sandParticleLayer = document.getElementById('sand-particle-layer');
+      const SAND_FLOOR_MAX = 160;
+      let sandFloorHeight = 0;
+
+      function spawnSandBurst(rect) {
+        const grainCount = 16 + Math.floor(Math.random() * 10);
+        for (let i = 0; i < grainCount; i++) {
+          const grain = document.createElement('div');
+          grain.className = 'sand-grain';
+          const startX = rect.left + Math.random() * rect.width;
+          const startY = rect.top + rect.height * (0.5 + Math.random() * 0.5);
+          grain.style.left = startX + 'px';
+          grain.style.top = startY + 'px';
+          sandParticleLayer.appendChild(grain);
+
+          const duration = 0.7 + Math.random() * 0.6;
+          const targetY = window.innerHeight - sandFloorHeight - (4 + Math.random() * 12);
+          const drift = Math.random() * 100 - 50;
+
+          requestAnimationFrame(() => {
+            grain.style.transition = `top ${duration}s cubic-bezier(0.55, 0, 1, 0.45), left ${duration}s ease-out, opacity 0.3s ease ${duration - 0.3}s`;
+            grain.style.top = targetY + 'px';
+            grain.style.left = (startX + drift) + 'px';
+            grain.style.opacity = '0.85';
+          });
+
+          setTimeout(() => grain.remove(), duration * 1000 + 100);
+        }
+
+        sandFloorHeight = Math.min(SAND_FLOOR_MAX, sandFloorHeight + 6);
+        sandFloor.style.height = sandFloorHeight + 'px';
+      }
 
       function crumbleHit() {
-        if (!crumbleTarget || crumbleLife <= 0) return;
+        if (!crumbleTarget || crumbleLife <= 0 || !gameEnabled) return;
         crumbleLife--;
         const pct = Math.min(92, (10 - crumbleLife) * 9.2);
         if (crumbleImg) crumbleImg.style.clipPath = `inset(0 0 ${pct}% 0)`;
-        sandPile.style.height = pct + '%';
 
         const rect = crumbleTarget.getBoundingClientRect();
+        spawnSandBurst(rect);
+
         showFoodPopup(
           Math.max(0, rect.left + rect.width / 2 - 70),
           Math.max(0, rect.top + rect.height / 2),
@@ -1260,7 +1346,7 @@
       }
 
       function spawnZombie() {
-        if (hpLevel <= 0) return; // 死亡後はスポーンしない
+        if (hpLevel <= 0 || !gameEnabled) return; // 死亡後・ゲームOFF中はスポーンしない
 
         const zombie = document.createElement('div');
         zombie.className = 'zombie';
@@ -1333,8 +1419,43 @@
       }
 
       // 数秒おきにゾンビが出現する
-      const zombieSpawnTimer = setInterval(spawnZombie, 6000);
+      let zombieSpawnTimer = setInterval(spawnZombie, 6000);
       spawnZombie(); // 最初の1体はすぐ出現
+
+      // --- GAME OFFトグル：ゾンビ・サバイバル要素をまるごと止められる ---
+      const gameToggleBtn = document.getElementById('game-toggle-btn');
+      const survivalHudEl = document.getElementById('survival-hud');
+
+      gameToggleBtn.addEventListener('click', () => {
+        gameEnabled = !gameEnabled;
+
+        if (!gameEnabled) {
+          clearInterval(survivalTimer);
+          clearInterval(zombieSpawnTimer);
+          activeZombies.forEach((rec) => {
+            clearInterval(rec.wanderInterval);
+            clearTimeout(rec.despawnTimeout);
+          });
+          activeZombies.clear();
+          document.querySelectorAll('.zombie').forEach(z => z.remove());
+          survivalHudEl.style.display = 'none';
+          gameToggleBtn.textContent = '🎮 GAME ON';
+          gameToggleBtn.classList.add('game-is-off');
+        } else {
+          if (hpLevel <= 0) {
+            hpLevel = 100;
+            foodLevel = 100;
+            document.getElementById('death-screen').classList.remove('active');
+          }
+          survivalHudEl.style.display = '';
+          updateHUD();
+          survivalTimer = setInterval(survivalTick, 1000);
+          zombieSpawnTimer = setInterval(spawnZombie, 6000);
+          spawnZombie();
+          gameToggleBtn.textContent = '🎮 GAME OFF';
+          gameToggleBtn.classList.remove('game-is-off');
+        }
+      });
 
       // ==========================================================================
       // イースターエッグ2：AI VTuberジャック (フッター3回クリック)
