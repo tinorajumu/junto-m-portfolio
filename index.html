@@ -694,10 +694,9 @@
 
     /* 画面下に降り積もる砂（他の作品の上に重なってもよい＝貫通せず積もる） */
     #sand-floor {
-      position: fixed;
+      position: absolute; /* サイト(ドキュメント)に紐づく。fixedだとスクロールしても画面に張り付いてしまう */
       left: 0;
       right: 0;
-      bottom: 0;
       height: 0px;
       max-height: 160px;
       background: linear-gradient(to top, #c9a876 0%, #b8935f 55%, rgba(184, 147, 95, 0.55) 100%);
@@ -705,15 +704,15 @@
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
       z-index: 40;
       pointer-events: none;
-      transition: height 0.5s ease;
+      transition: height 0.5s ease, top 0.5s ease;
     }
 
     #sand-particle-layer {
-      position: fixed;
-      inset: 0;
+      position: absolute; /* サイト(ドキュメント)に紐づく。fixedだとスクロールしても画面に張り付いてしまう */
+      top: 0;
+      left: 0;
       z-index: 45;
       pointer-events: none;
-      overflow: hidden;
     }
 
     .sand-grain {
@@ -1272,19 +1271,36 @@
       const SAND_FLOOR_MAX = 160;
       let sandFloorHeight = 0;
 
+      // 砂の山はページ(ドキュメント)基準の座標に固定する。スクロールに追従させるため
+      function updateSandFloorTop() {
+        const docHeight = document.documentElement.scrollHeight;
+        sandFloor.style.top = (docHeight - sandFloorHeight) + 'px';
+      }
+      updateSandFloorTop();
+      window.addEventListener('resize', updateSandFloorTop);
+
       function spawnSandBurst(rect) {
+        // getBoundingClientRectはビューポート基準なので、スクロール量を足してドキュメント基準に変換する
+        const docStartX = rect.left + window.scrollX;
+        const docStartY = rect.top + window.scrollY;
+
+        sandFloorHeight = Math.min(SAND_FLOOR_MAX, sandFloorHeight + 6);
+        sandFloor.style.height = sandFloorHeight + 'px';
+        updateSandFloorTop();
+        const floorTopDoc = document.documentElement.scrollHeight - sandFloorHeight;
+
         const grainCount = 16 + Math.floor(Math.random() * 10);
         for (let i = 0; i < grainCount; i++) {
           const grain = document.createElement('div');
           grain.className = 'sand-grain';
-          const startX = rect.left + Math.random() * rect.width;
-          const startY = rect.top + rect.height * (0.5 + Math.random() * 0.5);
+          const startX = docStartX + Math.random() * rect.width;
+          const startY = docStartY + rect.height * (0.5 + Math.random() * 0.5);
           grain.style.left = startX + 'px';
           grain.style.top = startY + 'px';
           sandParticleLayer.appendChild(grain);
 
           const duration = 0.7 + Math.random() * 0.6;
-          const targetY = window.innerHeight - sandFloorHeight - (4 + Math.random() * 12);
+          const targetY = floorTopDoc - (4 + Math.random() * 12);
           const drift = Math.random() * 100 - 50;
 
           requestAnimationFrame(() => {
@@ -1296,9 +1312,6 @@
 
           setTimeout(() => grain.remove(), duration * 1000 + 100);
         }
-
-        sandFloorHeight = Math.min(SAND_FLOOR_MAX, sandFloorHeight + 6);
-        sandFloor.style.height = sandFloorHeight + 'px';
       }
 
       function crumbleHit() {
