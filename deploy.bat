@@ -17,7 +17,7 @@ if errorlevel 1 (
 
 where gh >nul 2>nul
 if errorlevel 1 (
-  echo [ERROR] GitHub CLI (gh) not found in PATH.
+  echo [ERROR] GitHub CLI ^(gh^) not found in PATH.
   pause
   exit /b 1
 )
