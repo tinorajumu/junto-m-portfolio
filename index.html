@@ -203,14 +203,23 @@
       margin-bottom: 1.5rem;
     }
 
-    .profile-avatar {
+    .profile-avatar-wrap {
+      position: relative;
       width: 130px;
       height: 130px;
-      object-fit: cover;
       border-radius: 16px;
       border: 2px solid var(--accent-cyan);
       box-shadow: var(--neon-glow-cyan);
       flex-shrink: 0;
+      overflow: hidden;
+      background: #0c0d12;
+    }
+
+    .profile-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .profile-info h2 {
@@ -625,7 +634,7 @@
 
     /* 徘徊ゾンビ（クリックで討伐→FOOD回復） */
     .zombie {
-      position: fixed;
+      position: absolute; /* サイト(ドキュメント)に紐づく。position:fixedだとスクロールしても画面に張り付いてしまうため */
       font-size: 2.2rem;
       cursor: crosshair;
       z-index: 15;
@@ -643,6 +652,34 @@
     @keyframes zombieShuffle {
       0% { transform: rotate(-8deg); }
       100% { transform: rotate(8deg); }
+    }
+
+    /* イースターエッグ4：ゾンビに見逃された作品が砂となって崩れる */
+    .sand-pile {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0%;
+      background: linear-gradient(to top, #c9a876 0%, #b8935f 45%, rgba(184, 147, 95, 0.35) 100%);
+      transition: height 0.7s ease;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .crumble-collapsed::after {
+      content: '崩壊 (COLLAPSED)';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 6px #000, 0 0 12px #000;
+      z-index: 4;
+      pointer-events: none;
     }
 
     /* 隠し回復アイテム */
@@ -715,7 +752,7 @@
 
       .profile-card { padding: 1.5rem; margin-bottom: 2.5rem; }
       .profile-header-layout { flex-direction: column; align-items: center; text-align: center; gap: 1rem; }
-      .profile-avatar { width: 100px; height: 100px; }
+      .profile-avatar-wrap { width: 100px; height: 100px; }
       .profile-meta-row { justify-content: center; }
       .profile-bio { font-size: 0.95rem; }
 
@@ -808,7 +845,9 @@
     <!-- プロフィールセクション -->
     <section class="profile-card">
       <div class="profile-header-layout">
-        <img class="profile-avatar" src="assets/images/work-01-highschool-guide.jpg" alt="村井洵仁 プロフィール画像（高校生向け生成AI活用ガイドの4コマより）">
+        <div class="profile-avatar-wrap">
+          <img class="profile-avatar" src="assets/images/work-01-highschool-guide.jpg" alt="村井洵仁 プロフィール画像（高校生向け生成AI活用ガイドの4コマより）">
+        </div>
         <div class="profile-info">
           <h2>村井 洵仁</h2>
           <div class="profile-meta-row">
@@ -1121,6 +1160,11 @@
         if (hpLevel <= 0) {
           clearInterval(survivalTimer);
           clearInterval(zombieSpawnTimer);
+          activeZombies.forEach((rec) => {
+            clearInterval(rec.wanderInterval);
+            clearTimeout(rec.despawnTimeout);
+          });
+          activeZombies.clear();
           document.querySelectorAll('.zombie').forEach(z => z.remove());
           document.getElementById("death-screen").classList.add("active");
         }
@@ -1144,8 +1188,10 @@
         setTimeout(() => popup.remove(), 1000);
       };
 
-      // --- ゾンビ：画面を徘徊し、クリックで倒すとFOODが回復する ---
+      // --- ゾンビ：ページ上を徘徊し（スクロールに追従）、クリックで倒すとFOODが回復する ---
       const ZOMBIE_SIZE = 40;
+      let danmakuActive = false; // AI VTuberジャック発動後はゾンビを弾幕が自動撃墜する
+      const activeZombies = new Map(); // zombie要素 -> { wanderInterval, despawnTimeout }
 
       function showFoodPopup(x, y, text, color) {
         const popup = document.createElement("div");
@@ -1155,6 +1201,64 @@
         setTimeout(() => popup.remove(), 1000);
       }
 
+      // ==========================================================================
+      // イースターエッグ3：見逃したゾンビが作品を「砂」へと崩していく（10ライフ）
+      // ==========================================================================
+      const crumbleCandidates = [
+        document.querySelector('.profile-avatar-wrap'),
+        ...document.querySelectorAll('.work-image-container')
+      ].filter(Boolean);
+
+      let crumbleLife = 10;
+      const crumbleTarget = crumbleCandidates[Math.floor(Math.random() * crumbleCandidates.length)];
+      const crumbleImg = crumbleTarget ? crumbleTarget.querySelector('img') : null;
+      const sandPile = document.createElement('div');
+      sandPile.className = 'sand-pile';
+      if (crumbleTarget) crumbleTarget.appendChild(sandPile);
+
+      function crumbleHit() {
+        if (!crumbleTarget || crumbleLife <= 0) return;
+        crumbleLife--;
+        const pct = Math.min(92, (10 - crumbleLife) * 9.2);
+        if (crumbleImg) crumbleImg.style.clipPath = `inset(0 0 ${pct}% 0)`;
+        sandPile.style.height = pct + '%';
+
+        const rect = crumbleTarget.getBoundingClientRect();
+        showFoodPopup(
+          Math.max(0, rect.left + rect.width / 2 - 70),
+          Math.max(0, rect.top + rect.height / 2),
+          crumbleLife > 0 ? `🧟 作品を襲った！残りライフ ${crumbleLife}` : '💥 作品が砂になって崩れ落ちた…',
+          '#ff5577'
+        );
+
+        if (crumbleLife <= 0) {
+          crumbleTarget.classList.add('crumble-collapsed');
+        }
+      }
+
+      function defeatZombie(zombie, opts) {
+        const rec = activeZombies.get(zombie);
+        if (!rec) return;
+        clearInterval(rec.wanderInterval);
+        clearTimeout(rec.despawnTimeout);
+        activeZombies.delete(zombie);
+
+        const reward = (opts && opts.reward) || 15;
+        foodLevel = Math.min(100, foodLevel + reward);
+        updateHUD();
+
+        const rect = zombie.getBoundingClientRect();
+        const label = opts && opts.label ? ` (${opts.label})` : '';
+        showFoodPopup(rect.left, rect.top, `+${reward} Food!${label}`, '#00ff77');
+        zombie.remove();
+      }
+
+      function sweepAllZombiesByDanmaku() {
+        Array.from(activeZombies.keys()).forEach((zombie) => {
+          defeatZombie(zombie, { reward: 10, label: '弾幕命中' });
+        });
+      }
+
       function spawnZombie() {
         if (hpLevel <= 0) return; // 死亡後はスポーンしない
 
@@ -1162,35 +1266,45 @@
         zombie.className = 'zombie';
         zombie.textContent = '🧟';
 
-        let x = Math.random() * (window.innerWidth - ZOMBIE_SIZE);
-        let y = Math.random() * (window.innerHeight - ZOMBIE_SIZE * 2) + ZOMBIE_SIZE;
+        // ページ(ドキュメント)基準の座標。position:fixedではなくabsoluteなのでスクロールに追従する
+        const docWidth = document.documentElement.scrollWidth;
+        let x = Math.random() * Math.max(0, Math.min(window.innerWidth, docWidth) - ZOMBIE_SIZE);
+        let y = window.scrollY + ZOMBIE_SIZE + Math.random() * Math.max(0, window.innerHeight - ZOMBIE_SIZE * 2);
         zombie.style.left = x + 'px';
         zombie.style.top = y + 'px';
         document.body.appendChild(zombie);
 
-        // ランダムにゆっくり徘徊させる
+        // ランダムにゆっくり徘徊させる（ドキュメント全体の範囲内）
         const wanderInterval = setInterval(() => {
-          x = Math.max(0, Math.min(window.innerWidth - ZOMBIE_SIZE, x + (Math.random() * 240 - 120)));
-          y = Math.max(ZOMBIE_SIZE, Math.min(window.innerHeight - ZOMBIE_SIZE, y + (Math.random() * 240 - 120)));
+          const dw = document.documentElement.scrollWidth;
+          const dh = document.documentElement.scrollHeight;
+          x = Math.max(0, Math.min(dw - ZOMBIE_SIZE, x + (Math.random() * 240 - 120)));
+          y = Math.max(0, Math.min(dh - ZOMBIE_SIZE, y + (Math.random() * 240 - 120)));
           zombie.style.left = x + 'px';
           zombie.style.top = y + 'px';
         }, 3500);
 
-        // 一定時間クリックされなければ自然消滅（次のゾンビに交代）
+        // 一定時間クリックされなければ見逃し扱い→作品が1ライフ削れる
         const despawnTimeout = setTimeout(() => {
-          clearInterval(wanderInterval);
+          activeZombies.delete(zombie);
           zombie.remove();
+          crumbleHit();
         }, 20000);
 
-        zombie.addEventListener('click', (e) => {
-          clearInterval(wanderInterval);
-          clearTimeout(despawnTimeout);
-          const reward = 15;
-          foodLevel = Math.min(100, foodLevel + reward);
-          updateHUD();
-          showFoodPopup(e.clientX, e.clientY, `+${reward} Food! (ゾンビ討伐)`, '#00ff77');
-          zombie.remove();
+        activeZombies.set(zombie, { wanderInterval, despawnTimeout });
+
+        zombie.addEventListener('click', () => {
+          defeatZombie(zombie, { reward: 15, label: 'ゾンビ討伐' });
         });
+
+        // AI VTuberジャック発動中なら、出現直後に弾幕で自動的に撃墜される
+        if (danmakuActive) {
+          setTimeout(() => {
+            if (activeZombies.has(zombie)) {
+              defeatZombie(zombie, { reward: 10, label: '弾幕命中' });
+            }
+          }, 300 + Math.random() * 900);
+        }
       }
 
       // 数秒おきにゾンビが出現する
@@ -1215,6 +1329,10 @@
       });
 
       function triggerAIVtuberJack() {
+        // 弾幕がゾンビを一掃する。以後、新しく出現するゾンビも出現直後に弾幕で撃墜される
+        danmakuActive = true;
+        sweepAllZombiesByDanmaku();
+
         // グリッチ表示
         glitchOverlay.style.display = 'block';
         setTimeout(() => glitchOverlay.style.display = 'none', 1000);
