@@ -22,8 +22,8 @@
     </license>
   </content>
 
-  <!-- Work 01: 高校生向け 生成AI活用ガイド（4コマ解説） -->
-  <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/work-01-ai-guide-manga.jpg">
+  <!-- Work 01: 高校生向け 生成AI活用ガイド（4コマ解説・プロフィール画像として使用） -->
+  <content url="https://tinorajumu.github.io/junto-m-portfolio/assets/images/work-01-highschool-guide.jpg">
     <license>
       <permits type="usage">search</permits>
       <permits type="user">non-commercial</permits>

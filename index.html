@@ -203,6 +203,16 @@
       margin-bottom: 1.5rem;
     }
 
+    .profile-avatar {
+      width: 130px;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 2px solid var(--accent-cyan);
+      box-shadow: var(--neon-glow-cyan);
+      flex-shrink: 0;
+    }
+
     .profile-info h2 {
       font-size: 1.8rem;
       font-weight: 700;
@@ -672,6 +682,7 @@
 
       .profile-card { padding: 1.5rem; margin-bottom: 2.5rem; }
       .profile-header-layout { flex-direction: column; align-items: center; text-align: center; gap: 1rem; }
+      .profile-avatar { width: 100px; height: 100px; }
       .profile-meta-row { justify-content: center; }
       .profile-bio { font-size: 0.95rem; }
 
@@ -764,6 +775,7 @@
     <!-- プロフィールセクション -->
     <section class="profile-card">
       <div class="profile-header-layout">
+        <img class="profile-avatar" src="assets/images/work-01-highschool-guide.jpg" alt="村井洵仁 プロフィール画像（高校生向け生成AI活用ガイドの4コマより）">
         <div class="profile-info">
           <h2>村井 洵仁</h2>
           <div class="profile-meta-row">
@@ -828,44 +840,6 @@
                 <div class="rsl-item">
                   <div class="rsl-label">Usage</div>
                   <div class="rsl-val permit">ai-input</div>
-                </div>
-                <div class="rsl-item">
-                  <div class="rsl-label">User</div>
-                  <div class="rsl-val">non-com</div>
-                </div>
-                <div class="rsl-item">
-                  <div class="rsl-label">Payment</div>
-                  <div class="rsl-val">credit</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 作品1: 高校生向け生成AI -->
-        <article class="work-card">
-          <div class="work-image-container">
-            <img src="assets/images/work-01-ai-guide-manga.jpg" alt="作品1: 高校生向け生成AI">
-            <span class="c2pa-badge">✓ C2PA</span>
-          </div>
-          <div class="work-content">
-            <span class="work-tag">Lecture 01</span>
-            <h3 class="work-title">高校生向け 生成AI活用ガイド（4コマ解説）</h3>
-            <p class="work-description">
-              高校生向けに生成AIの正しい向き合い方と具体的な活用方法を解説する4コマ漫画。右から左へと流れる日本式のコマ割りをプロンプトで制御し、文字に頼らず視覚的なストーリー展開のみで「AIの利便性」と「ハルシネーション（間違い）に対するファクトチェックの重要性」を直感的に伝えています。
-            </p>
-            <details class="details-prompt">
-              <summary>Show Prompt</summary>
-              <div class="prompt-box">
-                高校生でもわかる生成AIの使い方の画像を生成して。主人公は男子高校生と女子高校生の2人を主人公にして。タッチは漫画風で、絵でわかりやすくするようにして。文字は少なくして、絵をメインにして。そして、構成は右から左になるようにして。
-              </div>
-            </details>
-            <div class="rsl-licensing-box">
-              <div class="rsl-title">🔒 RSL 1.0 ライセンス条件</div>
-              <div class="rsl-grid">
-                <div class="rsl-item">
-                  <div class="rsl-label">Usage</div>
-                  <div class="rsl-val permit">search</div>
                 </div>
                 <div class="rsl-item">
                   <div class="rsl-label">User</div>
