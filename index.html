@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Provenance & Licensing | 村井洵仁 AIクリエイター・ポートフォリオ</title>
+  <title>Provenance & Licensing | Junto Murai AIクリエイター・ポートフォリオ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #0b0b0f;
-      --card-bg: rgba(18, 18, 24, 0.75);
-      --card-border: rgba(0, 242, 254, 0.15);
-      --card-border-hover: rgba(186, 12, 247, 0.5);
-      --text-color: #f0f0f5;
-      --text-muted: #a0a0b0;
-      --accent-cyan: #00f2fe;
-      --accent-purple: #ba0cf7;
-      --neon-glow-cyan: 0 0 10px rgba(0, 242, 254, 0.5);
-      --neon-glow-purple: 0 0 10px rgba(186, 12, 247, 0.5);
+      /* 厳密なクール・高視認性配色パレット */
+      --bg-color: transparent; /* スクラッチ背景を透過で見せるため、body以下を透過に設定 */
+      --page-bg: #050508;
+      --card-bg: rgba(10, 11, 16, 0.85);
+      --card-border: rgba(0, 243, 255, 0.15);
+      --card-border-hover: rgba(189, 0, 255, 0.5);
+      --text-color: #f5f6fa;
+      --text-muted: #a5a8be;
+      --accent-cyan: #00f3ff;
+      --accent-purple: #bd00ff;
+      --neon-glow-cyan: 0 0 15px rgba(0, 243, 255, 0.4);
+      --neon-glow-purple: 0 0 15px rgba(189, 0, 255, 0.4);
     }
 
     * {
@@ -29,7 +31,7 @@
 
     body {
       font-family: 'Noto Sans JP', sans-serif;
-      background-color: var(--bg-color);
+      background-color: var(--page-bg);
       color: var(--text-color);
       line-height: 1.6;
       overflow-x: hidden;
@@ -42,16 +44,17 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: -1;
+      z-index: -3; /* スクラッチよりも後ろ */
       overflow: hidden;
+      pointer-events: none;
     }
 
     #video-background-container video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.25;
-      filter: saturate(1.2) contrast(1.1);
+      opacity: 0.18;
+      filter: saturate(1.1) contrast(1.15);
     }
 
     #video-background-container::after {
@@ -61,10 +64,38 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, rgba(11, 11, 15, 0.5) 0%, rgba(11, 11, 15, 0.9) 100%);
+      background: linear-gradient(180deg, rgba(5, 5, 8, 0.3) 0%, rgba(5, 5, 8, 0.9) 100%);
     }
 
-    /* コンテナ */
+    /* 隠し機能3：ブループリント・スクラッチ用コンテナ */
+    #scratch-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2; /* コンテンツの裏、動画の手前 */
+      overflow: hidden;
+    }
+    #scratch-wrap img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.4; /* スクラッチした際に見える裏画像の不透明度 */
+    }
+    #scratch-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    /* 全体コンテナ（背景を一部隙間から見せるため全体の背景は透過） */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -73,20 +104,21 @@
       z-index: 1;
     }
 
-    /* BGMコントロール */
+    /* BGMコントロール (PCデフォルト) */
     .audio-control-wrapper {
       position: fixed;
       top: 20px;
       right: 20px;
       z-index: 100;
+      transition: all 0.4s ease;
     }
 
     .audio-btn {
-      background: rgba(11, 11, 15, 0.8);
+      background: rgba(5, 5, 8, 0.85);
       border: 1px solid var(--accent-cyan);
       color: var(--text-color);
       font-family: 'Orbitron', sans-serif;
-      padding: 0.6rem 1.2rem;
+      padding: 0.7rem 1.4rem;
       font-size: 0.85rem;
       font-weight: 700;
       border-radius: 30px;
@@ -94,15 +126,15 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(8px);
       box-shadow: var(--neon-glow-cyan);
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
     .audio-btn:hover {
       background: var(--accent-cyan);
       color: #000;
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.8);
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
       transform: translateY(-2px);
     }
 
@@ -114,33 +146,33 @@
     .audio-btn.muted:hover {
       background: var(--accent-purple);
       color: #fff;
-      box-shadow: 0 0 20px rgba(186, 12, 247, 0.8);
+      box-shadow: 0 0 25px rgba(189, 0, 255, 0.8);
     }
 
     /* ヒーローセクション */
     header {
       text-align: center;
-      padding: 6rem 0 4rem;
+      padding: 6rem 0 3rem;
     }
 
     .site-title {
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
-      font-size: 3rem;
-      letter-spacing: 2px;
+      font-size: 3.5rem;
+      letter-spacing: 3px;
       background: linear-gradient(45deg, var(--accent-cyan), var(--accent-purple));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 0.5rem;
-      text-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+      text-shadow: 0 0 35px rgba(0, 243, 255, 0.25);
     }
 
     .site-tagline {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       color: var(--text-color);
       font-weight: 700;
       margin-bottom: 2rem;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
     }
 
     /* プロフィールカード */
@@ -150,81 +182,143 @@
       border-radius: 16px;
       padding: 2.5rem;
       margin-bottom: 4rem;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
       transition: border-color 0.5s ease;
+      position: relative;
     }
 
     .profile-card:hover {
       border-color: var(--accent-cyan);
     }
 
-    .profile-header {
+    .profile-header-layout {
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
       gap: 1.5rem;
-      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 1.5rem;
       margin-bottom: 1.5rem;
     }
 
-    .profile-title {
-      font-size: 1.5rem;
+    .profile-info h2 {
+      font-size: 1.8rem;
       font-weight: 700;
-      color: var(--accent-cyan);
+      color: var(--text-color);
+      margin-bottom: 0.4rem;
     }
 
-    .profile-meta {
-      font-size: 1.1rem;
+    .profile-meta-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 1rem;
       color: var(--text-muted);
+    }
+
+    .birthday-badge {
+      background: rgba(0, 243, 255, 0.12);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* アクセスカウンター表示 */
+    .counter-wrapper {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 10px;
+      padding: 0.6rem 1rem;
+      text-align: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .counter-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      color: var(--accent-cyan);
+      letter-spacing: 1px;
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .counter-digits {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .digit-box {
+      background: #000;
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      color: var(--accent-cyan);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      width: 24px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      box-shadow: inset 0 0 8px rgba(0, 243, 255, 0.3);
     }
 
     .profile-bio {
       font-size: 1rem;
       color: var(--text-color);
-      max-width: 800px;
-      margin: 1.5rem auto;
+      max-width: 950px;
       text-align: justify;
+      margin-bottom: 1.8rem;
     }
 
     .profile-links {
       display: flex;
-      justify-content: center;
       flex-wrap: wrap;
-      gap: 1.2rem;
-      margin-top: 1.5rem;
+      gap: 1rem;
     }
 
     .profile-link-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--text-color);
       text-decoration: none;
-      padding: 0.6rem 1.2rem;
+      padding: 0.65rem 1.3rem;
       font-size: 0.9rem;
+      font-weight: 700;
       border-radius: 8px;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
     .profile-link-btn:hover {
-      background: rgba(0, 242, 254, 0.1);
+      background: rgba(0, 243, 255, 0.08);
       border-color: var(--accent-cyan);
       color: var(--accent-cyan);
       transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 243, 255, 0.15);
     }
 
     /* ギャラリーセクション */
     .section-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2rem;
+      font-size: 2.2rem;
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 3.5rem;
       color: var(--text-color);
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       position: relative;
     }
 
@@ -234,14 +328,14 @@
       bottom: -10px;
       left: 50%;
       transform: translateX(-50%);
-      width: 60px;
+      width: 70px;
       height: 3px;
       background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
     }
 
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
       gap: 2.5rem;
       margin-bottom: 5rem;
     }
@@ -254,22 +348,22 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
     .work-card:hover {
       transform: translateY(-8px);
       border-color: var(--card-border-hover);
-      box-shadow: 0 15px 35px rgba(186, 12, 247, 0.2);
+      box-shadow: 0 15px 35px rgba(189, 0, 255, 0.25);
     }
 
     .work-image-container {
       position: relative;
       width: 100%;
       padding-top: 56.25%;
-      background-color: #1a1a24;
+      background-color: #0c0d12;
       overflow: hidden;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
@@ -285,32 +379,28 @@
     }
 
     .work-card:hover .work-image-container img {
-      transform: scale(1.05);
+      transform: scale(1.04);
     }
 
     .c2pa-badge {
       position: absolute;
       top: 12px;
       right: 12px;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       border: 1px solid var(--accent-cyan);
       color: var(--accent-cyan);
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      padding: 4px 8px;
+      padding: 4px 10px;
       border-radius: 4px;
-      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       box-shadow: var(--neon-glow-cyan);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-      max-width: calc(100% - 24px);
     }
 
     .work-content {
-      padding: 1.5rem;
+      padding: 1.6rem;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -323,14 +413,15 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
 
     .work-title {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 700;
       margin-bottom: 1rem;
       color: var(--text-color);
+      line-height: 1.4;
     }
 
     .work-description {
@@ -338,18 +429,14 @@
       color: var(--text-muted);
       margin-bottom: 1.5rem;
       text-align: justify;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     /* アコーディオン (details) */
     .details-prompt {
       margin-bottom: 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .details-prompt summary {
@@ -367,12 +454,12 @@
       transition: color 0.3s ease;
     }
 
-    .details-prompt summary:hover {
-      color: #fff;
-    }
-
     .details-prompt summary::-webkit-details-marker {
       display: none;
+    }
+
+    .details-prompt summary:hover {
+      color: #fff;
     }
 
     .details-prompt summary::after {
@@ -387,27 +474,21 @@
 
     .prompt-box {
       padding: 0.8rem;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.4);
       border-left: 2px solid var(--accent-cyan);
       border-radius: 0 4px 4px 0;
       font-family: monospace;
       font-size: 0.8rem;
-      color: #b0c4de;
+      color: #b3c2d6;
       word-break: break-word;
       margin-bottom: 1rem;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
-    .prompt-box.no-prompt {
-      font-family: 'Noto Sans JP', sans-serif;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    /* ライセンス要件表示 (RSL 1.0) */
+    /* ライセンス表示 (RSL 1.0) */
     .rsl-licensing-box {
-      background: rgba(186, 12, 247, 0.05);
-      border: 1px solid rgba(186, 12, 247, 0.2);
+      background: rgba(189, 0, 255, 0.03);
+      border: 1px solid rgba(189, 0, 255, 0.15);
       border-radius: 8px;
       padding: 0.8rem;
       margin-top: auto;
@@ -417,7 +498,7 @@
       font-family: 'Orbitron', sans-serif;
       font-size: 0.75rem;
       font-weight: 700;
-      color: var(--accent-purple);
+      color: #d156ff;
       margin-bottom: 0.5rem;
       display: flex;
       align-items: center;
@@ -432,7 +513,7 @@
     }
 
     .rsl-item {
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.5);
       padding: 0.4rem;
       border-radius: 4px;
     }
@@ -452,7 +533,7 @@
     }
 
     .rsl-val.permit {
-      color: #00ff66;
+      color: #00ff77;
     }
 
     .rsl-val.restrict {
@@ -461,7 +542,7 @@
 
     /* フッター */
     footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
       padding: 4rem 0 2rem;
       text-align: center;
       font-size: 0.85rem;
@@ -469,13 +550,15 @@
     }
 
     .footer-rsl-policy {
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto 1.5rem;
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.015);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.2rem;
       font-size: 0.8rem;
+      line-height: 1.6;
+      cursor: pointer; /* 隠し機能発動のためクリック可能に */
     }
 
     .footer-rsl-policy a {
@@ -488,30 +571,141 @@
     }
 
     .copyright {
-      margin-top: 1rem;
+      margin-top: 1.2rem;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.75rem;
       letter-spacing: 1px;
     }
 
-    /* レスポンシブ対応 */
+    /* ==========================================================================
+       隠し機能1 & 2 用のスタイル群
+       ========================================================================== */
+    /* サバイバルHUD */
+    #survival-hud {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(10, 11, 16, 0.9);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+      z-index: 9998;
+      width: 160px;
+      box-shadow: var(--neon-glow-cyan);
+      backdrop-filter: blur(8px);
+    }
+    .stat-bar { display: flex; align-items: center; margin-bottom: 8px; }
+    .stat-bar:last-child { margin-bottom: 0; }
+    .stat-bar .label { color: #fff; font-size: 11px; width: 45px; font-family: 'Orbitron', sans-serif; font-weight: bold; }
+    .stat-bar .bar { flex-grow: 1; height: 10px; background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+    .stat-bar .bar div { height: 100%; transition: width 0.3s ease; }
+    #hp-fill { background: linear-gradient(90deg, #c0392b, #ff4d4d); width: 100%; }
+    #food-fill { background: linear-gradient(90deg, #d35400, #f39c12); width: 100%; }
+
+    /* 隠し回復アイテム */
+    .hidden-food {
+      position: absolute; cursor: pointer;
+      font-size: 1.6rem; opacity: 0.1;
+      transition: opacity 0.3s, transform 0.2s; z-index: 10;
+    }
+    .hidden-food:hover { opacity: 1.0; transform: scale(1.2); }
+
+    /* 死亡画面 */
+    #death-screen {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #000; color: #8a0303;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 2s ease;
+    }
+    #death-screen.active { opacity: 1; pointer-events: auto; }
+    #death-screen h1 { font-size: 5rem; font-family: serif; letter-spacing: 8px; margin: 0; text-shadow: 0 0 20px #ff0000; }
+    #death-screen p { color: #aaa; margin: 15px 0; font-size: 1.2rem; }
+    #death-screen button {
+      margin-top: 20px; padding: 12px 28px; background: #111; color: #fff;
+      border: 1px solid #8a0303; cursor: pointer; font-family: 'Orbitron', sans-serif;
+      font-weight: bold; border-radius: 4px; box-shadow: 0 0 10px rgba(138, 3, 3, 0.5);
+      transition: all 0.3s;
+    }
+    #death-screen button:hover { background: #8a0303; color: #000; box-shadow: 0 0 20px #ff0000; }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-40px); opacity: 0; }
+    }
+
+    /* AI VTuberジャック 演出用 */
+    #glitch-overlay {
+      position: fixed; top:0; left:0; width:100vw; height:100vh;
+      background: rgba(0, 243, 255, 0.1); z-index: 9999;
+      pointer-events: none; display: none;
+    }
+    #matrix-canvas {
+      position: fixed; top:0; left:0; width:100vw; height:100vh;
+      z-index: 9991; pointer-events: none; display: none; opacity: 0.35;
+    }
+    #danmaku-container {
+      position: fixed; top:0; left:0; width:100vw; height:100vh;
+      z-index: 9993; pointer-events: none; overflow: hidden; display: none;
+    }
+    .bullet-text {
+      position: absolute; white-space: nowrap; font-size: 1.8rem; font-weight: bold;
+      color: #fff; text-shadow: 2px 2px 4px #000, 0 0 10px var(--accent-cyan);
+      animation: danmakuRun 8s linear forwards;
+    }
+    @keyframes danmakuRun {
+      0% { left: 100%; }
+      100% { left: -100%; }
+    }
+    #vtuber-avatar {
+      position: fixed; bottom: -50px; right: -300px; width: 380px; height: auto;
+      z-index: 9995; pointer-events: none; transition: right 1s cubic-bezier(0.19, 1, 0.22, 1);
+      display: none;
+    }
+    #vtuber-avatar.show { right: 20px; }
+
+    /* ==========================================================================
+       スマートフォン専用メディアクエリ (幅768px以下でUIが動的にトランスフォーム)
+       ========================================================================== */
     @media (max-width: 768px) {
-      .site-title {
-        font-size: 2.2rem;
+      .site-title { font-size: 2.4rem; letter-spacing: 1.5px; }
+      .site-tagline { font-size: 1rem; margin-bottom: 1.5rem; }
+
+      .profile-card { padding: 1.5rem; margin-bottom: 2.5rem; }
+      .profile-header-layout { flex-direction: column; align-items: center; text-align: center; gap: 1rem; }
+      .profile-meta-row { justify-content: center; }
+      .profile-bio { font-size: 0.95rem; }
+
+      .profile-links { flex-direction: column; width: 100%; }
+      .profile-link-btn { width: 100%; justify-content: center; padding: 0.8rem 1rem; }
+
+      .gallery-grid { grid-template-columns: 1fr; gap: 1.8rem; }
+      .work-content { padding: 1.2rem; }
+
+      /* BGMボタンを「画面最下部中央のフローティングトグル」に動的変形 */
+      .audio-control-wrapper {
+        top: auto; right: auto; bottom: 20px; left: 50%;
+        transform: translateX(-50%); width: 90%; max-width: 320px;
       }
-      .site-tagline {
-        font-size: 1rem;
+      .audio-btn {
+        width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.9rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), var(--neon-glow-cyan);
       }
-      .gallery-grid {
-        grid-template-columns: 1fr;
-      }
-      .profile-card {
-        padding: 1.5rem;
-      }
+      .audio-btn.muted { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), var(--neon-glow-purple); }
+
+      /* サバイバルHUDをスマホで見やすく下部に再配置 */
+      #survival-hud { top: 15px; left: 50%; transform: translateX(-50%); width: 200px; display: flex; gap: 10px; justify-content: space-between; }
+      .stat-bar { margin-bottom: 0; flex-grow: 1; }
     }
   </style>
 </head>
 <body>
+
+  <!-- 隠し機能3：背景スクラッチ＆ブループリント画像 -->
+  <div id="scratch-wrap">
+    <!-- 裏画像 (UE5ブループリント・ウェイトペイント画面) -->
+    <img src="assets/images/secret-blueprint.jpg" alt="秘密のブループリント裏画面">
+    <canvas id="scratch-canvas"></canvas>
+  </div>
 
   <!-- 背景動画 -->
   <div id="video-background-container">
@@ -521,13 +715,45 @@
     </video>
   </div>
 
-  <!-- BGMコントロール -->
+  <!-- BGMコントロール (PC:右上固定 / スマホ:最下部中央フローティング) -->
   <div class="audio-control-wrapper">
     <button id="mute-btn" class="audio-btn muted">
       🔊 Play BGM
     </button>
   </div>
 
+  <!-- 隠し機能1：サバイバルHUD -->
+  <div id="survival-hud">
+    <div class="stat-bar">
+      <span class="label">HP</span>
+      <div class="bar"><div id="hp-fill"></div></div>
+    </div>
+    <div class="stat-bar">
+      <span class="label">FOOD</span>
+      <div class="bar"><div id="food-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- 隠しアイテム（絶対配置でページに散りばめられている） -->
+  <div class="hidden-food" style="top: 35%; left: 3%;" onclick="recoverFood(30, this, event)">🍖</div>
+  <div class="hidden-food" style="top: 75%; right: 4%;" onclick="recoverFood(25, this, event)">🥣</div>
+  <div class="hidden-food" style="top: 90%; left: 8%;" onclick="recoverFood(25, this, event)">🍖</div>
+
+  <!-- 死亡画面 -->
+  <div id="death-screen">
+    <h1>YOU DIED</h1>
+    <p>空腹で倒れてしまった...</p>
+    <button onclick="location.reload()">リスポーン</button>
+  </div>
+
+  <!-- AI VTuberジャック演出用の要素 -->
+  <div id="glitch-overlay"></div>
+  <canvas id="matrix-canvas"></canvas>
+  <div id="danmaku-container"></div>
+  <!-- 白かわい(VTuber)のアバター画像（プレースホルダーとして work-06 を流用） -->
+  <img id="vtuber-avatar" src="assets/images/work-06-line-chatbot.jpg" alt="AI VTuber Shirakawaii">
+
+  <!-- メインコンテンツ -->
   <div class="container">
     <!-- ヒーローセクション -->
     <header>
@@ -537,10 +763,24 @@
 
     <!-- プロフィールセクション -->
     <section class="profile-card">
-      <div class="profile-header">
-        <div>
-          <h2 class="profile-title">村井 洵仁</h2>
-          <p class="profile-meta">デジタルハリウッド大学 4年 / AIクリエイター</p>
+      <div class="profile-header-layout">
+        <div class="profile-info">
+          <h2>村井 洵仁</h2>
+          <div class="profile-meta-row">
+            <span>デジタルハリウッド大学 4年 / AIクリエイター</span>
+            <span class="birthday-badge">♍ 9月9日生</span>
+          </div>
+        </div>
+        <!-- アクセスカウンター (localStorage連動) -->
+        <div class="counter-wrapper">
+          <div class="counter-label">来歴(C2PA)検証者数</div>
+          <div class="counter-digits" id="visitor-counter">
+            <span class="digit-box">1</span>
+            <span class="digit-box">2</span>
+            <span class="digit-box">4</span>
+            <span class="digit-box">8</span>
+            <span class="digit-box">9</span>
+          </div>
         </div>
       </div>
       <p class="profile-bio">
@@ -548,7 +788,7 @@
       </p>
       <div class="profile-links">
         <a href="https://x.com/Shirakawaii_AIV" target="_blank" class="profile-link-btn">
-          🐦 X (旧Twitter) - Shirakawaii_AIV
+          🐦 X - Shirakawaii_AIV
         </a>
         <a href="https://dskr-home.vercel.app" target="_blank" class="profile-link-btn">
           🌐 DSKR Home
@@ -564,14 +804,14 @@
       <h2 class="section-title">Lecture Archives & Works</h2>
       <div class="gallery-grid">
 
-        <!-- 作品1 -->
+        <!-- 作品1: 高校生向け生成AI -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/work-01-ai-guide-manga.jpg" alt="作品1: 高校生向け 生成AI活用ガイド（4コマ解説）">
-            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+            <img src="assets/images/work-01-ai-guide-manga.jpg" alt="作品1: 高校生向け生成AI">
+            <span class="c2pa-badge">✓ C2PA</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Work 01</span>
+            <span class="work-tag">Lecture 01</span>
             <h3 class="work-title">高校生向け 生成AI活用ガイド（4コマ解説）</h3>
             <p class="work-description">
               高校生向けに生成AIの正しい向き合い方と具体的な活用方法を解説する4コマ漫画。右から左へと流れる日本式のコマ割りをプロンプトで制御し、文字に頼らず視覚的なストーリー展開のみで「AIの利便性」と「ハルシネーション（間違い）に対するファクトチェックの重要性」を直感的に伝えています。
@@ -602,22 +842,22 @@
           </div>
         </article>
 
-        <!-- 作品2 -->
+        <!-- 作品2: 提出ファイル（プロンプトなし） -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/work-02-prompt-symbol-exploration.jpg" alt="作品2: 言葉とシンボルの探求：初期クリエイティブワーク">
-            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+            <img src="assets/images/work-02-prompt-symbol-exploration.jpg" alt="作品2: 基礎ワーク">
+            <span class="c2pa-badge">✓ C2PA</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Work 02</span>
+            <span class="work-tag">Lecture 02</span>
             <h3 class="work-title">言葉とシンボルの探求：初期クリエイティブワーク</h3>
             <p class="work-description">
               講義の初期段階における、プロンプトを用いない直接的なアプローチ、または基礎的なシンボルワークの検証画像。AIにすべてを生成させるのではなく、クリエイター自身の直接的な手の介入と、言葉の基礎概念の整理にフォーカスした最初期の提出作品です。
             </p>
             <details class="details-prompt">
               <summary>Show Prompt</summary>
-              <div class="prompt-box no-prompt">
-                プロンプトなし — 本作品はAIへの直接的なテキスト指示を行わず、手作業による基礎的なシンボルワークとして制作されています。
+              <div class="prompt-box">
+                なし (手動設計および最初期の基礎的調整ワーク)
               </div>
             </details>
             <div class="rsl-licensing-box">
@@ -640,14 +880,14 @@
           </div>
         </article>
 
-        <!-- 作品3 -->
+        <!-- 作品3: パンクガール -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/work-03-punk-rebel.jpg" alt="作品3: PUNK REBEL：来歴と個性の調和">
-            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+            <img src="assets/images/work-03-punk-rebel.jpg" alt="作品3: PUNK REBEL">
+            <span class="c2pa-badge">✓ C2PA</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Work 03</span>
+            <span class="work-tag">Lecture 03</span>
             <h3 class="work-title">PUNK REBEL：来歴と個性の調和</h3>
             <p class="work-description">
               自らの個性とクリエイティビティを象徴するパンク少女のイラスト。背景動画「Video Project 7.mp4」の持つオリジナル音楽の衝動と呼応するよう、アメコミ風の劇的な色彩とアングルをプロンプトで細部まで指定。AIの偶然性に頼らず、自分の明確なコンセプトによって制御・創作した、ポートフォリオを象徴する一枚。
@@ -678,22 +918,22 @@
           </div>
         </article>
 
-        <!-- 作品4 -->
+        <!-- 作品4: インフォグラフィック -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/work-04-open-vs-commercial.jpg" alt="作品4: オープンモデル vs 商用モデル（比較インフォグラフィック）">
-            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+            <img src="assets/images/work-04-open-vs-commercial.jpg" alt="作品4: インフォグラフィック">
+            <span class="c2pa-badge">✓ C2PA</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Work 04</span>
+            <span class="work-tag">Lecture 04</span>
             <h3 class="work-title">オープンモデル vs 商用モデル（比較インフォグラフィック）</h3>
             <p class="work-description">
               オープンソースモデルと商用クローズドモデルという、AI技術を取り巻く2大陣営の思想設計の違いを直感的に整理したインフォグラフィック。LoRAやControlNetの構造的な違いからライセンス契約の違いまで、グラフィカルに一望できるようにコントロールして出力しました。
             </p>
             <details class="details-prompt">
               <summary>Show Prompt</summary>
-              <div class="prompt-box">
-                モダンなフラットイラストスタイルの、プロフェッショナルで詳細な比較インフォグラフィック。画像は垂直に2つのパネルに分かれている。中央上部には、大きな日本語テキストで「オープンモデル vs 商用モデル」と書かれており、その背景は光るデジタルネットワークの線とノードになっている。左パネル（オープンモデル）は明るい緑色の背景。タイトルは「オープンモデル (Open Models)」。上部のイラストは、開いたゲートと、ラップトップで作業する多様な開発者の多数のグループ。周囲にはコードアイコン（&lt;/&gt;）、電球アイコンがある。テキストリストとアイコンは、無料・オープンソース（地球と鉛筆）、自由にカスタマイズ可能（コードとギア）、コード &amp; 重み公開（ギアとコード）、コミュニティ駆動（人々）が日本語で並ぶ。その下には、下部イラストとして、LoRAセクション（スライダーと矢印のアイコン、「独自の微調整が可能」）、ControNetセクション（カメラとノブのアイコン、「様々な入力による制御」）、過学習に注意セクション（警告マーク付きの脳のアイコン、「過学習に注意」）が日本語で描かれる。右パネル（商用モデル）は明るいオレンジ色の背景。表示するタイトルは商用モデル (Commercial Models)　で。上部のイラストは、閉じられたゲートとモダンなビル、そこに企業ロゴ（例：OpenAI風のアイコン）がある。大きなパドロック（鍵）アイコンが目立つ。テキストリストとアイコンは、有料・ライセンス制（ドル記号とコイン）、安定した利用（シールド）、重みは非公開（鍵付き盾）、企業によるサポート（ヘッドセット付き人）が日本語で並ぶ。その下には、下部イラストとして、過学習を防ぐセクション（脳のアイコンと3つの緑色チェックマーク、「過学習を防ぐ」）、性能的なパラメータセクション（3つの矢印アイコンと3つの緑色チェックマーク、「性能的なパラメータ」）が日本語で描かれる。中央セクションには、縦に並んだアイコンとラベルが配置され、比較カテゴリーを示す：コスト、アクセス、カスタマイズ、透明性、用途。画像全体は、すっきりとした線、鮮やかな色彩、そしてデジタルネットワークの輝きを特徴とするモダンなスタイル。
+              <div class="prompt-box" style="font-size: 0.75rem;">
+                モダンなフラットイラストスタイルの、プロフェッショナルで詳細な比較インフォグラフィック。画像は垂直に2つのパネルに分かれている。中央上部には、大きな日本語テキストで「オープンモデル vs 商用モデル」と書かれており、その背景は光るデジタルネットワークの線とノードになっている。左パネル（オープンモデル）は明るい緑色の背景。タイトルは「オープンモデル (Open Models)」。上部のイラストは、開いたゲートと、ラップトップで作業する多様な開発者の多数のグループ。周囲にはコードアイコン（&lt;/&gt;）、電球アイコンがある。テキストリストとアイコンは、無料・オープンソース（地球と鉛筆）、自由にカスタマイズ可能（コードとギア）、コード &amp; 重み公開（ギアとコード）、コミュニティ駆動（人々）が日本語で並ぶ。その下には、下部イラストとして、LoRAセクション（スライダーと矢印のアイコン、「独自の微調整が可能」）、ControNetセクション（カメラとノブのアイコン、「様々な入力による制御」）、過学習に注意セクション（警告マーク付きの脳のアイコン、「過学習に注意」）が日本語で描かれる。右パネル（商用モデル）は明るいオレンジ色の背景。表示するタイトルは商用モデル (Commercial Models)　で。上部のイラストは、閉じられたゲートとモダンなビル、そこに企業ロゴ（例：OpenAI風のアイコン）がある。大きなパドロック（鍵）アイコンが目立つ。テキストリストとアイコンは、有料・ライセンス制（ドル記号とコイン）、安定した利用（シールド）、重みは非公開（鍵付き盾）、企業によるサポート（ヘッドセット付き人）が日本語で並ぶ。その下には、下部イラストとして、過学習を防ぐセクション（脳のアイコンと3つの緑色チェックマーク、「過学習を防ぐ」）、性能的なパラメータセクション（3つの矢印アイコンと3つの緑色チェックマーク、「性能的なパラメータ」）が日本語で描かれる。中央セクションには、縦に並んだアイコンとラベルが配置され、比較カテゴリーを示す：コスト、アクセス、カスタマイズ、透明性、用途。画像全体は、すっきりとした線、鮮やかな色彩、精度と視認性の高いインフォグラフィックスタイル。
               </div>
             </details>
             <div class="rsl-licensing-box">
@@ -716,21 +956,21 @@
           </div>
         </article>
 
-        <!-- 作品5 -->
+        <!-- 作品5: 砂のアート -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/work-05-diffusion-sand-art.jpg" alt="作品5: 私の中の生成AIの仕組み：砂のアートと風の比喩（Diffusionモデル）">
-            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+            <img src="assets/images/work-05-diffusion-sand-art.jpg" alt="作品5: 砂のアートと風の比喩">
+            <span class="c2pa-badge">✓ C2PA</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Work 05</span>
-            <h3 class="work-title">私の中の生成AIの仕組み：砂のアートと風の比喩（Diffusionモデル）</h3>
+            <span class="work-tag">Lecture 05</span>
+            <h3 class="work-title">私の中の生成AIの仕組み：砂のアートと風の比喩</h3>
             <p class="work-description">
-              Diffusionモデルの数理的アルゴリズム（ノイズの付加と除去）を、「砂絵のアートが風で崩れ、職人（デノイザ）がそれを取り除いて再配置する」という私独自の直感的な比喩をもとにビジュアル化した図解。温かみのあるデジタル水彩の質感と技術的テキストの融合を狙いました。
+              Diffusionモデルの数理的なアルゴリズム（ノイズの付加と除去）を、「砂絵のアートが風で崩れ、職人（デノイザ）がそれを取り除いて再配置する」という私独自の直感的な比喩をもとにビジュアル化した図解。温かみのあるデジタル水彩の質感と技術的テキストの融合を狙いました。
             </p>
             <details class="details-prompt">
               <summary>Show Prompt</summary>
-              <div class="prompt-box">
+              <div class="prompt-box" style="font-size: 0.75rem;">
                 温かみのある手描きのデジタル水彩風イラストで砂のアートと風の比喩に基づく Diffusion モデルの仕組みを描いたインフォグラフィックを作成するという内容で、画面を横断するタイムライン形式で左側には特徴のない灰色の砂の山から始まり中央で砂の山から猫の形が浮かび上がり小さな職人の手学習されたデノイザが砂粒を配置。右側には完成した詳細な猫の砂の彫刻があります。背景には光るデジタルネットワークの線と砂漠のような質感があり右上には風が馬の砂の彫刻を吹き飛ばしているインセットがあり、画像内には日本語テキストが含まれます。タイトルは私の中の生成AIの仕組み砂のアートと風の比喩 Diffusionモデルとしラベルとしてただの砂完全なノイズ、ノイズを少しずつ取り除き形を浮かび上がらせる、新しい砂のアート生成された画像、学習されたデノイザ職人、フォワードプロセス風で崩れる過程を観察、ノイズの嵐を配置するように。説明文として生成AIが美しい砂のアート画像が風ノイズで崩れてただの砂の山完全なノイズになるまでの過程を何千回も観察学習しました。生成する時はそのただの砂の山から崩れた過程を逆再生するように学習した職人デノイザが砂の粒を正確に再配置して新しい見たことのない砂のアート生成された画像を作り上げます。これが私の Diffusion モデルの腑に落ちた比喩です、という文章を柔らかい光と優しい雰囲気を描くように。
               </div>
             </details>
@@ -754,21 +994,21 @@
           </div>
         </article>
 
-        <!-- 作品6 -->
+        <!-- 作品6: チャットボット -->
         <article class="work-card">
           <div class="work-image-container">
-            <img src="assets/images/work-06-line-chatbot.jpg" alt="作品6: マルチモーダルLINEチャットボット『全力肯定彼氏くん（LuC4）』">
-            <span class="c2pa-badge">✓ C2PA (来歴署名あり)</span>
+            <img src="assets/images/work-06-line-chatbot.jpg" alt="作品6: 全力肯定彼氏くん">
+            <span class="c2pa-badge">✓ C2PA</span>
           </div>
           <div class="work-content">
-            <span class="work-tag">Work 06</span>
-            <h3 class="work-title">マルチモーダルLINEチャットボット『全力肯定彼氏くん（LuC4）』</h3>
+            <span class="work-tag">Lecture 06</span>
+            <h3 class="work-title">全力肯定彼氏くん（LuC4）システムと対話サイクル</h3>
             <p class="work-description">
               画像と音声をマルチモーダルに解釈しユーザーに全力肯定で応答するLINEボットのシステム設計概念。AIの自動出力に依存するのではなく、人間の管理者（Human-in-the-Loop）が後ろで監視・制御することで、サービスの安全性と品質を高めるサイバーかつ温かみのある対話サイクルを描きました。
             </p>
             <details class="details-prompt">
               <summary>Show Prompt</summary>
-              <div class="prompt-box">
+              <div class="prompt-box" style="font-size: 0.75rem;">
                 近未来的なスマートフォンの画面にチャットアプリが表示されユーザーが写真や音声メッセージを送ると画面の奥にいるAIキャラクターがそれを受け取りテキストや音声で返信している様子を描いたイラストです背景には人間のオペレーターがAIの応答を監視して微調整するコントロールパネルがありヒューマンインザループの仕組みを表現しています画像の中央上部にはマルチモーダルLINEチャットボット「全力肯定彼氏くん（LuC4）」という文字が大きくネオンサインのように輝いて表示されています全体的にサイバーパンクと日常が融合したような温かみのあるデジタルアートスタイルにしてください 画像はわかりやすくかつ、視覚的にもわかるように制作サイクルを表現してください。
               </div>
             </details>
@@ -797,40 +1037,253 @@
 
     <!-- フッター -->
     <footer>
-      <div class="footer-rsl-policy">
+      <!-- 隠し機能1：3回クリックでAIジャックが発動するエリア -->
+      <div class="footer-rsl-policy" id="footer-policy-box">
         <p>
-          本ポートフォリオサイトは、AI時代の機械可読許諾宣言の業界標準である <strong>RSL 1.0 (Really Simple Licensing)</strong> に準拠しています。CCライセンスのような人間向けの表示ライセンスとは異なり、クローラーや検索AIが自動で解釈できる独立した機械可読標準です。<br>
-          詳細な機械可読ライセンス条件は、サイトルートに配置された <code>robots.txt</code> の <code>License:</code> ディレクティブおよび <code><a href="./license.xml">license.xml</a></code> をご参照ください。<br>
+          本ポートフォリオサイトは、AI時代の機械可読許諾宣言の業界標準である <strong>RSL 1.0 (Really Simple Licensing)</strong> に準拠しています。<br>
+          詳細な機械可読ライセンス条件は、サイトルートに配置された <code>robots.txt</code> および <code><a href="./license.xml">license.xml</a></code> をご参照ください。<br>
           また、掲載画像には <strong>C2PA (Content Credentials)</strong> が署名・埋め込みされており、来歴の追跡が可能です。
         </p>
       </div>
-      <p class="copyright">&copy; 2026 Junji Murai. All Rights Reserved. created by Junto M</p>
+      <p class="copyright">&copy; 2026 Junto Murai. All Rights Reserved. created by Junto M</p>
     </footer>
   </div>
 
   <script>
-    // BGMコントロールロジック
     document.addEventListener('DOMContentLoaded', () => {
+      // BGMコントロールロジック
       const video = document.getElementById('bg-video');
       const muteBtn = document.getElementById('mute-btn');
 
-      // 初期はミュート（自動再生を有効にするため）
       video.muted = true;
 
       muteBtn.addEventListener('click', () => {
         if (video.muted) {
-          // ミュート解除
           video.muted = false;
           muteBtn.textContent = '🔇 Mute BGM';
           muteBtn.classList.remove('muted');
           video.play().catch(e => console.log("BGM playback triggered, waiting for interaction..."));
         } else {
-          // ミュート設定
           video.muted = true;
           muteBtn.textContent = '🔊 Play BGM';
           muteBtn.classList.add('muted');
         }
       });
+
+      // アクセスカウンター (localStorage)
+      const counterContainer = document.getElementById('visitor-counter');
+      const BASE_COUNT = 12489;
+
+      let currentCount = localStorage.getItem('junto_portfolio_counter');
+      if (!currentCount) {
+        currentCount = BASE_COUNT;
+      } else {
+        currentCount = parseInt(currentCount) + 1;
+      }
+      localStorage.setItem('junto_portfolio_counter', currentCount);
+
+      const countStr = String(currentCount).padStart(6, '0');
+      counterContainer.innerHTML = '';
+      for (let i = 0; i < countStr.length; i++) {
+        const span = document.createElement('span');
+        span.className = 'digit-box';
+        span.textContent = countStr[i];
+        counterContainer.appendChild(span);
+      }
+
+      // ==========================================================================
+      // イースターエッグ1：サバイバル・ポートフォリオ
+      // ==========================================================================
+      let foodLevel = 100;
+      let hpLevel = 100;
+      let survivalTimer;
+
+      survivalTimer = setInterval(() => {
+        foodLevel -= 2; // 毎秒空腹度が減る
+        if (foodLevel <= 0) {
+          foodLevel = 0;
+          hpLevel -= 10; // 空腹が0になるとHPが減る
+        }
+        updateHUD();
+
+        if (hpLevel <= 0) {
+          clearInterval(survivalTimer);
+          document.getElementById("death-screen").classList.add("active");
+        }
+      }, 1000);
+
+      function updateHUD() {
+        document.getElementById("food-fill").style.width = foodLevel + "%";
+        document.getElementById("hp-fill").style.width = hpLevel + "%";
+      }
+
+      window.recoverFood = function(amount, element, event) {
+        foodLevel = Math.min(100, foodLevel + amount);
+        updateHUD();
+        element.style.display = "none"; // 食べたら消える
+
+        // 食べたときのエフェクト
+        const popup = document.createElement("div");
+        popup.innerText = "+" + amount + " Food!";
+        popup.style.cssText = `position:fixed; top:${event.clientY}px; left:${event.clientX}px; color:#00f3ff; font-weight:bold; font-family:'Orbitron', sans-serif; z-index:9999; animation: floatUp 1s forwards; text-shadow: 0 0 8px rgba(0,243,255,0.8);`;
+        document.body.appendChild(popup);
+        setTimeout(() => popup.remove(), 1000);
+      };
+
+      // ==========================================================================
+      // イースターエッグ2：AI VTuberジャック (フッター3回クリック)
+      // ==========================================================================
+      let footerClicks = 0;
+      const footerBox = document.getElementById('footer-policy-box');
+      const glitchOverlay = document.getElementById('glitch-overlay');
+      const matrixCanvas = document.getElementById('matrix-canvas');
+      const danmakuContainer = document.getElementById('danmaku-container');
+      const vtuberAvatar = document.getElementById('vtuber-avatar');
+
+      footerBox.addEventListener('click', () => {
+        footerClicks++;
+        if (footerClicks === 3) {
+          triggerAIVtuberJack();
+        }
+      });
+
+      function triggerAIVtuberJack() {
+        // グリッチ表示
+        glitchOverlay.style.display = 'block';
+        setTimeout(() => glitchOverlay.style.display = 'none', 1000);
+
+        // 各キャンバス・コンテナを起動
+        matrixCanvas.style.display = 'block';
+        danmakuContainer.style.display = 'block';
+        vtuberAvatar.style.display = 'block';
+        setTimeout(() => vtuberAvatar.classList.add('show'), 100);
+
+        // マトリックス風コードの雨
+        initMatrix();
+
+        // ニコニコ動画風の弾幕を定期生成
+        const damakuTexts = [
+          "真面目ぶってんじゃねーよ！",
+          "C2PA埋め込み完了！",
+          "RSL 1.0 は CC じゃないよ！",
+          "Junto Murai 最強AIクリエイター",
+          "来歴証明は義務！",
+          "お誕生日おめでとう！（9/9）",
+          "実質プロデュース作品やばい！",
+          "これがAIの未来か...",
+          "ノイズから形が浮かび上がってくる！"
+        ];
+
+        setInterval(() => {
+          const text = damakuTexts[Math.floor(Math.random() * damakuTexts.length)];
+          createDanmaku(text);
+        }, 800);
+      }
+
+      function createDanmaku(text) {
+        const bullet = document.createElement('div');
+        bullet.className = 'bullet-text';
+        bullet.innerText = text;
+        bullet.style.top = Math.random() * 80 + 10 + '%';
+        bullet.style.color = Math.random() > 0.5 ? '#00f3ff' : '#bd00ff';
+        danmakuContainer.appendChild(bullet);
+        setTimeout(() => bullet.remove(), 8000);
+      }
+
+      // マトリックス雨の実装
+      function initMatrix() {
+        const mCtx = matrixCanvas.getContext('2d');
+        matrixCanvas.width = window.innerWidth;
+        matrixCanvas.height = window.innerHeight;
+
+        const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890';
+        const alphabet = katakana.split('');
+
+        const fontSize = 16;
+        const columns = matrixCanvas.width / fontSize;
+
+        const rainDrops = [];
+        for (let x = 0; x < columns; x++) {
+          rainDrops[x] = 1;
+        }
+
+        const drawMatrix = () => {
+          mCtx.fillStyle = 'rgba(5, 5, 8, 0.05)';
+          mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+          mCtx.fillStyle = '#0f0';
+          mCtx.font = fontSize + 'px monospace';
+
+          for (let i = 0; i < rainDrops.length; i++) {
+            const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+            mCtx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+            if (rainDrops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+              rainDrops[i] = 0;
+            }
+            rainDrops[i]++;
+          }
+        };
+        setInterval(drawMatrix, 30);
+      }
+
+      // ==========================================================================
+      // イースターエッグ3：ブループリント・スクラッチ
+      // ==========================================================================
+      const scratchCanvas = document.getElementById("scratch-canvas");
+      const sCtx = scratchCanvas.getContext("2d");
+      let isDrawing = false;
+
+      function resizeScratch() {
+        scratchCanvas.width = window.innerWidth;
+        scratchCanvas.height = window.innerHeight;
+        // 表面をダークトーンで覆い、裏画像が少し透けて、削る面白さを倍増させます。
+        sCtx.fillStyle = "#0c0c11";
+        sCtx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+      }
+      window.addEventListener("resize", resizeScratch);
+      resizeScratch();
+
+      sCtx.lineJoin = "round";
+      sCtx.lineCap = "round";
+      sCtx.lineWidth = 90; // 消しゴム（削る）サイズ
+
+      function scratch(x, y) {
+        sCtx.globalCompositeOperation = "destination-out";
+        sCtx.lineTo(x, y);
+        sCtx.stroke();
+      }
+
+      // マウスイベント
+      scratchCanvas.addEventListener("mousedown", (e) => {
+        isDrawing = true;
+        sCtx.beginPath();
+        sCtx.moveTo(e.clientX, e.clientY);
+      });
+      scratchCanvas.addEventListener("mousemove", (e) => {
+        if (isDrawing) scratch(e.clientX, e.clientY);
+      });
+      scratchCanvas.addEventListener("mouseup", () => { isDrawing = false; });
+      scratchCanvas.addEventListener("mouseleave", () => { isDrawing = false; });
+
+      // スマホのタッチイベント
+      scratchCanvas.addEventListener("touchstart", (e) => {
+        isDrawing = true;
+        const touch = e.touches[0];
+        sCtx.beginPath();
+        sCtx.moveTo(touch.clientX, touch.clientY);
+      });
+      scratchCanvas.addEventListener("touchmove", (e) => {
+        if (isDrawing) {
+          // 不要なデフォルト挙動を遮断
+          if (e.target === scratchCanvas) {
+            e.preventDefault();
+          }
+          const touch = e.touches[0];
+          scratch(touch.clientX, touch.clientY);
+        }
+      }, { passive: false });
+      scratchCanvas.addEventListener("touchend", () => { isDrawing = false; });
     });
   </script>
 </body>

@@ -33,8 +33,8 @@ if errorlevel 1 (
 
 git status --short
 echo.
-set /p COMMIT_MSG=Commit message (empty = "Update portfolio"):
-if "%COMMIT_MSG%"=="" set COMMIT_MSG=Update portfolio
+set COMMIT_MSG=Update portfolio - %date% %time%
+echo Commit message: %COMMIT_MSG%
 
 git add -A
 git commit -m "%COMMIT_MSG%"
