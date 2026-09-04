@@ -35,6 +35,84 @@
       color: var(--text-color);
       line-height: 1.6;
       overflow-x: hidden;
+      /* bodyに独自のスタッキングコンテキストを作る。これが無いと、負のz-indexを持つ
+         固定背景レイヤー（動画/オーロラ/スクラッチ/3Dゾンビ）は見た目には表示されても
+         クリック判定だけはposition:staticなbody自身の箱に奪われ、操作できなくなる */
+      isolation: isolate;
+    }
+
+    /* 環境背景：オーロラ状の光と微かな星空（単調だった背景に奥行きと彩りを追加） */
+    #ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -4; /* 背景動画よりさらに奥 */
+      overflow: hidden;
+      pointer-events: none;
+      background: var(--page-bg);
+    }
+    #ambient-bg::before {
+      content: '';
+      position: absolute;
+      inset: -20%;
+      background-image:
+        radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,0.9) 50%, transparent 51%),
+        radial-gradient(1px 1px at 35% 65%, rgba(255,255,255,0.6) 50%, transparent 51%),
+        radial-gradient(1.5px 1.5px at 60% 15%, rgba(0,243,255,0.8) 50%, transparent 51%),
+        radial-gradient(1px 1px at 80% 45%, rgba(255,255,255,0.5) 50%, transparent 51%),
+        radial-gradient(1.5px 1.5px at 90% 80%, rgba(189,0,255,0.7) 50%, transparent 51%),
+        radial-gradient(1px 1px at 20% 85%, rgba(255,255,255,0.4) 50%, transparent 51%);
+      background-repeat: repeat;
+      background-size: 340px 340px;
+      animation: starTwinkle 5s ease-in-out infinite alternate;
+    }
+    .aurora-blob {
+      position: absolute;
+      width: 55vw;
+      height: 55vw;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.32;
+      mix-blend-mode: screen;
+      will-change: transform;
+      animation: auroraDrift 26s ease-in-out infinite;
+    }
+    .aurora-blob.blob-a {
+      top: -15%;
+      left: -15%;
+      background: radial-gradient(circle, var(--accent-cyan), transparent 70%);
+      animation-duration: 24s;
+    }
+    .aurora-blob.blob-b {
+      bottom: -20%;
+      right: -15%;
+      background: radial-gradient(circle, var(--accent-purple), transparent 70%);
+      animation-duration: 30s;
+      animation-delay: -8s;
+    }
+    .aurora-blob.blob-c {
+      top: 25%;
+      right: 10%;
+      width: 40vw;
+      height: 40vw;
+      opacity: 0.18;
+      background: radial-gradient(circle, #ff2e88, transparent 70%);
+      animation-duration: 34s;
+      animation-delay: -14s;
+    }
+    @keyframes auroraDrift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(8%, 6%) scale(1.15); }
+      66% { transform: translate(-6%, 5%) scale(0.9); }
+    }
+    @keyframes starTwinkle {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .aurora-blob, #ambient-bg::before { animation: none; }
     }
 
     /* 背景動画 */
@@ -65,6 +143,17 @@
       width: 100%;
       height: 100%;
       background: linear-gradient(180deg, rgba(5, 5, 8, 0.3) 0%, rgba(5, 5, 8, 0.9) 100%);
+    }
+
+    /* 3Dゾンビ徘徊レイヤー：背景動画より手前、スクラッチ層より奥をゆっくり横切る */
+    #zombie3d-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
     }
 
     /* 隠し機能3：ブループリント・スクラッチ用コンテナ */
@@ -656,23 +745,58 @@
     /* 徘徊ゾンビ（クリックで討伐→FOOD回復） */
     .zombie {
       position: absolute; /* サイト(ドキュメント)に紐づく。position:fixedだとスクロールしても画面に張り付いてしまうため */
-      font-size: 2.2rem;
+      width: 44px;
+      height: 44px;
       cursor: crosshair;
       z-index: 15;
-      line-height: 1;
       user-select: none;
-      image-rendering: pixelated;
-      filter: drop-shadow(0 0 6px rgba(0, 255, 100, 0.7)) grayscale(0.25) hue-rotate(-10deg);
+      perspective: 300px;
       transition: left 3.5s linear, top 3.5s linear;
-      animation: zombieShuffle 0.6s ease-in-out infinite alternate;
     }
-    .zombie:hover {
-      filter: drop-shadow(0 0 12px rgba(0, 255, 100, 1)) grayscale(0.25) hue-rotate(-10deg);
-      transform: scale(1.15);
+    .zombie-emoji {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      font-size: 2.2rem;
+      line-height: 1;
+      display: inline-block;
+      transform: translate(-50%, -60%) rotateY(-24deg) rotateZ(-6deg);
+      transform-style: preserve-3d;
+      /* drop-shadowを複数重ねて疑似的な押し出し(3D)を表現 */
+      filter:
+        drop-shadow(0 0 6px rgba(0, 255, 100, 0.65))
+        drop-shadow(2px 3px 0 rgba(0, 60, 20, 0.55))
+        drop-shadow(4px 6px 3px rgba(0, 0, 0, 0.5))
+        grayscale(0.2) hue-rotate(-10deg) saturate(1.2);
+      animation: zombieShuffle3D 0.7s ease-in-out infinite alternate;
     }
-    @keyframes zombieShuffle {
-      0% { transform: rotate(-8deg); }
-      100% { transform: rotate(8deg); }
+    .zombie-shadow {
+      position: absolute;
+      left: 50%;
+      bottom: -2px;
+      width: 26px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), transparent 70%);
+      transform: translateX(-50%);
+      animation: zombieShadowPulse 0.7s ease-in-out infinite alternate;
+    }
+    .zombie:hover .zombie-emoji {
+      filter:
+        drop-shadow(0 0 12px rgba(0, 255, 100, 1))
+        drop-shadow(2px 3px 0 rgba(0, 60, 20, 0.7))
+        drop-shadow(4px 6px 3px rgba(0, 0, 0, 0.6))
+        grayscale(0.2) hue-rotate(-10deg) saturate(1.3);
+      transform: translate(-50%, -60%) scale(1.15) rotateY(0deg) rotateZ(0deg);
+    }
+    @keyframes zombieShuffle3D {
+      0% { transform: translate(-50%, -60%) rotateY(-24deg) rotateZ(-6deg) translateY(0); }
+      50% { transform: translate(-50%, -66%) rotateY(0deg) rotateZ(0deg) translateY(-4px); }
+      100% { transform: translate(-50%, -60%) rotateY(24deg) rotateZ(6deg) translateY(0); }
+    }
+    @keyframes zombieShadowPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.55; }
+      50% { transform: translateX(-50%) scale(0.7); opacity: 0.35; }
     }
 
     /* イースターエッグ4：ゾンビに見逃された作品が砂となって崩れ、画面下に降り積もる */
@@ -698,8 +822,16 @@
       left: 0;
       right: 0;
       height: 0px;
-      max-height: 160px;
-      background: linear-gradient(to top, #c9a876 0%, #b8935f 55%, rgba(184, 147, 95, 0.55) 100%);
+      max-height: 350px;
+      background-color: #b8935f;
+      /* 砂が積もるほど、下から少しずつこの画像が現れる（画像は固定サイズで下端を揃え、器(高さ)が伸びるほど上まで見えていく） */
+      background-image:
+        linear-gradient(to top, rgba(184, 147, 95, 0.65) 0%, rgba(184, 147, 95, 0.25) 45%, rgba(184, 147, 95, 0) 100%),
+        url('assets/images/sand-reveal-provenance.jpg');
+      background-repeat: no-repeat, no-repeat;
+      background-position: center bottom, center bottom;
+      background-size: 100% 100%, 640px 350px;
+      filter: sepia(0.5) saturate(1.6) hue-rotate(-8deg) brightness(0.95) contrast(1.05);
       border-top: 1px solid rgba(255, 255, 255, 0.15);
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
       z-index: 40;
@@ -823,6 +955,16 @@
   </style>
 </head>
 <body>
+
+  <!-- 環境背景：オーロラ状の光と星空（最背面） -->
+  <div id="ambient-bg">
+    <div class="aurora-blob blob-a"></div>
+    <div class="aurora-blob blob-b"></div>
+    <div class="aurora-blob blob-c"></div>
+  </div>
+
+  <!-- 3Dゾンビが背景をたまに横切る演出用キャンバス -->
+  <canvas id="zombie3d-canvas"></canvas>
 
   <!-- 隠し機能3：背景スクラッチ＆ブループリント画像 -->
   <div id="scratch-wrap">
@@ -1268,7 +1410,7 @@
       // 砂は作品の場所ではなく、画面下に降り積もる（他の作品の上に重なってもよい＝貫通しない）
       const sandFloor = document.getElementById('sand-floor');
       const sandParticleLayer = document.getElementById('sand-particle-layer');
-      const SAND_FLOOR_MAX = 160;
+      const SAND_FLOOR_MAX = 350; // crumbleLife(10)を使い切ったとき、ちょうど画像全体が現れる高さ
       let sandFloorHeight = 0;
 
       // 砂の山はページ(ドキュメント)基準の座標に固定する。スクロールに追従させるため
@@ -1284,7 +1426,7 @@
         const docStartX = rect.left + window.scrollX;
         const docStartY = rect.top + window.scrollY;
 
-        sandFloorHeight = Math.min(SAND_FLOOR_MAX, sandFloorHeight + 6);
+        sandFloorHeight = Math.min(SAND_FLOOR_MAX, sandFloorHeight + 35);
         sandFloor.style.height = sandFloorHeight + 'px';
         updateSandFloorTop();
         const floorTopDoc = document.documentElement.scrollHeight - sandFloorHeight;
@@ -1335,6 +1477,9 @@
         }
       }
 
+      // 3Dゾンビ徘徊レイヤー（別scriptモジュール）から、立ち止まって攻撃が命中した瞬間に呼び出す
+      window.__triggerZombieAttackDamage = crumbleHit;
+
       function defeatZombie(zombie, opts) {
         const rec = activeZombies.get(zombie);
         if (!rec) return;
@@ -1358,12 +1503,42 @@
         });
       }
 
+      // --- 弾幕(bullet-text)とゾンビの本当の当たり判定 ---
+      const activeBullets = new Set();
+      let danmakuLoopRunning = false;
+
+      function rectsOverlap(a, b) {
+        return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      }
+
+      function danmakuCollisionLoop() {
+        if (!danmakuActive) {
+          danmakuLoopRunning = false;
+          return;
+        }
+        if (activeBullets.size && activeZombies.size) {
+          activeBullets.forEach((bullet) => {
+            const bRect = bullet.getBoundingClientRect();
+            activeZombies.forEach((rec, zombie) => {
+              if (!activeBullets.has(bullet) || !activeZombies.has(zombie)) return;
+              const zRect = zombie.getBoundingClientRect();
+              if (rectsOverlap(bRect, zRect)) {
+                activeBullets.delete(bullet);
+                bullet.remove();
+                defeatZombie(zombie, { reward: 10, label: '弾幕命中' });
+              }
+            });
+          });
+        }
+        requestAnimationFrame(danmakuCollisionLoop);
+      }
+
       function spawnZombie() {
         if (hpLevel <= 0 || !gameEnabled) return; // 死亡後・ゲームOFF中はスポーンしない
 
         const zombie = document.createElement('div');
         zombie.className = 'zombie';
-        zombie.textContent = '🧟';
+        zombie.innerHTML = '<span class="zombie-shadow"></span><span class="zombie-emoji">🧟</span>';
 
         // 現在の画面(ビューポート)の外側から出現させる（上下左右いずれかの枠外）
         const viewLeft = window.scrollX;
@@ -1420,15 +1595,8 @@
         zombie.addEventListener('click', () => {
           defeatZombie(zombie, { reward: 15, label: 'ゾンビ討伐' });
         });
-
-        // AI VTuberジャック発動中なら、出現直後に弾幕で自動的に撃墜される
-        if (danmakuActive) {
-          setTimeout(() => {
-            if (activeZombies.has(zombie)) {
-              defeatZombie(zombie, { reward: 10, label: '弾幕命中' });
-            }
-          }, 300 + Math.random() * 900);
-        }
+        // AI VTuberジャック発動中は、実際に弾幕(bullet-text)とゾンビの矩形が
+        // 重なったときにdanmakuCollisionLoop()が本当に撃墜する（見た目と当たり判定を一致させる）
       }
 
       // 数秒おきにゾンビが出現する
@@ -1505,6 +1673,12 @@
         // マトリックス風コードの雨
         initMatrix();
 
+        // 弾幕とゾンビの当たり判定ループを起動（多重起動しないようガード）
+        if (!danmakuLoopRunning) {
+          danmakuLoopRunning = true;
+          danmakuCollisionLoop();
+        }
+
         // ニコニコ動画風の弾幕を定期生成
         const damakuTexts = [
           "真面目ぶってんじゃねーよ！",
@@ -1531,7 +1705,11 @@
         bullet.style.top = Math.random() * 80 + 10 + '%';
         bullet.style.color = Math.random() > 0.5 ? '#00f3ff' : '#bd00ff';
         danmakuContainer.appendChild(bullet);
-        setTimeout(() => bullet.remove(), 8000);
+        activeBullets.add(bullet);
+        setTimeout(() => {
+          activeBullets.delete(bullet);
+          bullet.remove();
+        }, 8000);
       }
 
       // マトリックス雨の実装
@@ -1629,6 +1807,256 @@
       }, { passive: false });
       scratchCanvas.addEventListener("touchend", () => { isDrawing = false; });
     });
+  </script>
+
+  <!-- ==========================================================================
+       3Dゾンビ徘徊レイヤー：2体のFBXキャラクター＋モーション集を使い、
+       背景をたまに横切らせる。モーション切替時の「ポーズのズレ」による
+       カクつき(ラグ)を避けるため、必ずcrossFade（fadeIn/fadeOut）で
+       ブレンドしてから次のアクションへ切り替える。
+       ========================================================================== -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+    import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
+    (function () {
+      // 重いFBXアセットのため、モバイル/縮小モーション設定では完全に無効化する
+      const isSmallScreen = window.innerWidth < 768;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isSmallScreen || prefersReducedMotion) return;
+
+      const canvas = document.getElementById('zombie3d-canvas');
+      if (!canvas || !window.WebGLRenderingContext) return;
+
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      } catch (e) {
+        console.warn('3Dゾンビ用WebGLの初期化に失敗しました', e);
+        return;
+      }
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const TARGET_HEIGHT = 50; // ワールド単位。生FBXは等身大(約180)のため、画面上で控えめな大きさに縮小する
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(32, window.innerWidth / window.innerHeight, 1, 3000);
+      camera.position.set(0, 110, 560);
+      camera.lookAt(0, -60, 0);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+      scene.add(new THREE.HemisphereLight(0xbfe0ff, 0x241608, 1.4));
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1.6);
+      dirLight.position.set(150, 260, 320);
+      scene.add(dirLight);
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      const CHAR_URLS = [
+        'assets/3D/copzombie_l_actisdato.fbx',
+        'assets/3D/Zombiegirl W Kurniawan.fbx'
+      ];
+      const MOTION_URLS = {
+        idle: 'assets/3D/Scary Zombie Pack_motion/zombie idle.fbx',
+        walk: 'assets/3D/Scary Zombie Pack_motion/zombie walk.fbx',
+        crawl: 'assets/3D/Scary Zombie Pack_motion/zombie crawl.fbx',
+        attack: 'assets/3D/Scary Zombie Pack_motion/zombie attack.fbx'
+      };
+
+      const loader = new FBXLoader();
+      const loadFBX = (url) => new Promise((resolve, reject) => {
+        loader.load(encodeURI(url), resolve, undefined, reject);
+      });
+
+      // アセットは一度だけ読み込み、以降の出現はSkeletonUtils.cloneで使い回す
+      let assetsPromise = null;
+      function loadAssets() {
+        if (!assetsPromise) {
+          assetsPromise = Promise.all([
+            Promise.all(CHAR_URLS.map(loadFBX)),
+            Promise.all(Object.entries(MOTION_URLS).map(([key, url]) => loadFBX(url).then((fbx) => [key, fbx])))
+          ]).then(([models, motionEntries]) => {
+            const clips = {};
+            motionEntries.forEach(([key, fbx]) => {
+              if (fbx.animations && fbx.animations[0]) clips[key] = fbx.animations[0];
+            });
+            const heightScales = models.map((model) => {
+              model.traverse((obj) => {
+                if (obj.isMesh) { obj.castShadow = false; obj.receiveShadow = false; obj.frustumCulled = false; }
+              });
+              // FBXは等身大(概ね170〜190ユニット)なので、実測した高さからTARGET_HEIGHTに収まる縮尺を算出する
+              const box = new THREE.Box3().setFromObject(model);
+              const size = new THREE.Vector3();
+              box.getSize(size);
+              return size.y > 0 ? TARGET_HEIGHT / size.y : 0.25;
+            });
+            return { models, clips, heightScales };
+          }).catch((err) => {
+            console.warn('3Dゾンビ用アセットの読み込みに失敗しました。演出をスキップします。', err);
+            assetsPromise = Promise.resolve(null);
+            return null;
+          });
+        }
+        return assetsPromise;
+      }
+
+      // モーション同士を必ずcrossFadeでブレンドし、切替時の「ズレ」によるカクつきを防ぐ
+      function fadeToAction(state, name, duration) {
+        const next = state.actions[name];
+        if (!next || state.current === next) return;
+        const prev = state.current;
+        state.current = next;
+        next.enabled = true;
+        next.setEffectiveWeight(1);
+        next.reset().fadeIn(duration).play();
+        if (prev) prev.fadeOut(duration);
+      }
+
+      const WALK_SPEED = 24; // 1秒あたりの移動量
+      const activeWanderers = [];
+
+      function disposeWanderer(w) {
+        scene.remove(w.model);
+        w.mixer.stopAllAction();
+        w.model.traverse((obj) => {
+          if (obj.isMesh) {
+            obj.geometry.dispose();
+            (Array.isArray(obj.material) ? obj.material : [obj.material]).forEach((m) => m && m.dispose());
+          }
+        });
+      }
+
+      const ATTACK_FALLBACK_MS = 1600; // 攻撃モーションが読み込めなかった場合の代替時間
+
+      function spawnWanderer() {
+        loadAssets().then((assets) => {
+          if (!assets || !assets.models.length) return;
+
+          const charIndex = Math.floor(Math.random() * assets.models.length);
+          const model = SkeletonUtils.clone(assets.models[charIndex]);
+          model.scale.setScalar(assets.heightScales[charIndex] || 0.25);
+          const mixer = new THREE.AnimationMixer(model);
+          const actions = {};
+          Object.keys(assets.clips).forEach((key) => {
+            actions[key] = mixer.clipAction(assets.clips[key]);
+          });
+          if (actions.attack) {
+            actions.attack.setLoop(THREE.LoopOnce);
+            actions.attack.clampWhenFinished = true;
+          }
+          const state = { current: null, actions };
+
+          // 画面の左右どちらかの外側から出て、画面中央付近でいったん立ち止まって攻撃してから、反対側へ歩き去る
+          const fromLeft = Math.random() > 0.5;
+          const startX = fromLeft ? -460 : 460;
+          const stopX = Math.random() * 160 - 80;
+          const endX = fromLeft ? 460 : -460;
+          model.position.set(startX, 0, -40 + Math.random() * 80);
+          model.rotation.y = fromLeft ? Math.PI / 2 : -Math.PI / 2;
+          scene.add(model);
+
+          const useCrawl = !!actions.crawl && Math.random() < 0.3;
+          const moveKey = useCrawl ? 'crawl' : 'walk';
+          const speed = useCrawl ? WALK_SPEED * 0.6 : WALK_SPEED;
+          if (actions.idle) fadeToAction(state, 'idle', 0.01);
+          setTimeout(() => fadeToAction(state, moveKey, 0.4), 200 + Math.random() * 300);
+
+          const attackClip = assets.clips.attack;
+          activeWanderers.push({
+            model, mixer, state, moveKey,
+            startX, stopX, endX,
+            phase: 'approach',
+            phaseStart: performance.now(),
+            leg1Ms: (Math.abs(stopX - startX) / speed) * 1000,
+            attackMs: attackClip ? attackClip.duration * 1000 : ATTACK_FALLBACK_MS,
+            leg2Ms: (Math.abs(endX - stopX) / speed) * 1000,
+            attacked: false
+          });
+        }).catch(() => {});
+      }
+
+      // 数十秒に一度、まれに背景を横切る（常時ではなく「たまに」出現させる）
+      function scheduleNextWander() {
+        const delay = 40000 + Math.random() * 40000; // 40〜80秒間隔
+        setTimeout(() => {
+          if (activeWanderers.length < 2) spawnWanderer();
+          scheduleNextWander();
+        }, delay);
+      }
+
+      const clock = new THREE.Clock();
+      let started = false;
+      function animate() {
+        requestAnimationFrame(animate);
+        const delta = Math.min(clock.getDelta(), 0.1); // タブ非アクティブ復帰時の大ジャンプを防ぐ
+
+        const now = performance.now();
+        for (let i = activeWanderers.length - 1; i >= 0; i--) {
+          const w = activeWanderers[i];
+          w.mixer.update(delta);
+          const elapsed = now - w.phaseStart;
+
+          if (w.phase === 'approach') {
+            const t = Math.min(1, w.leg1Ms > 0 ? elapsed / w.leg1Ms : 1);
+            w.model.position.x = w.startX + (w.stopX - w.startX) * t;
+            if (t >= 1) {
+              w.phase = 'attack';
+              w.phaseStart = now;
+              // 通り過ぎながらではなく、必ず立ち止まってから攻撃モーションに切り替える
+              if (w.state.actions.attack) fadeToAction(w.state, 'attack', 0.25);
+            }
+          } else if (w.phase === 'attack') {
+            if (!w.attacked && elapsed >= w.attackMs * 0.6) {
+              w.attacked = true;
+              if (window.__triggerZombieAttackDamage) window.__triggerZombieAttackDamage();
+            }
+            if (elapsed >= w.attackMs) {
+              w.phase = 'retreat';
+              w.phaseStart = now;
+              fadeToAction(w.state, w.moveKey, 0.3);
+            }
+          } else { // retreat
+            const t = Math.min(1, w.leg2Ms > 0 ? elapsed / w.leg2Ms : 1);
+            w.model.position.x = w.stopX + (w.endX - w.stopX) * t;
+            if (t >= 1) {
+              disposeWanderer(w);
+              activeWanderers.splice(i, 1);
+            }
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      // ページの初期表示を邪魔しないよう、load完了後のアイドル時間にアセットを先読みする
+      const requestIdle = window.requestIdleCallback || function (cb) { setTimeout(cb, 1500); };
+      window.addEventListener('load', () => {
+        requestIdle(() => {
+          loadAssets().then(() => {
+            if (started) return;
+            started = true;
+            setTimeout(spawnWanderer, 4000); // 読み込み完了後、最初の1体を少し早めに見せる
+            scheduleNextWander();
+          });
+        });
+      });
+
+      animate();
+    })();
   </script>
 </body>
 </html>
